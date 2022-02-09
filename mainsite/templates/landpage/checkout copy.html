@@ -1,0 +1,215 @@
+{% extends "frontend/bases/main.html" %}
+{% load static %}
+{% load markdown_extras %}
+{% load mathfilters %}
+
+{% block content %}
+
+<section class="account" style="background-image: url('{% static 'public/assets/bg-9.jpg' %}');min-height:800px;">
+    <div class="account-wrap" style="max-width: 1430px;">
+        <h1>Check Out</h1>
+
+        <div id="wrapper-total-price" style="margin-bottom: 20px;">
+            <span class="text-white">Total Amount : $ <span id="total-amount">{{total_price}}</span></span>
+        </div>
+        <table class="attr-table cart-table">
+            <thead>
+                <tr style="background: #e41092;">
+                    <td>Product name</td>
+                    <td>Quantity</td>
+                    <td>Price</td>
+                    <td>Amount</td>
+                    <td></td>
+                </tr>
+            </thead>
+            <tbody>
+                {% if cartItems|length %}
+                    {% for cartItem in cartItems %}
+                        <tr>
+                            <td style="vertical-align: middle;">
+                                <div style="display: flex;align-items: center;">
+                                    <img src="/media/{{cartItem.image}}" style="width:50px;margin-right:5px;">
+                                    <span>{{cartItem.title}}</span>
+                                </div>
+                            </td>
+                            <td>{{cartItem.quantity}}</td>
+                            <td>$ {{cartItem.price}}</td>
+                            <td>$ {{cartItem.quantity|mul:cartItem.price}}</td>
+                            <td>
+                                <div class="remove-cartBtn-wrapper">
+                                    <button data-id="{{cartItem.id}}" class="btn-remove-cartItem" style="background: transparent;border: none;cursor: pointer;">
+                                        <img src="{% static 'public/assets/remove-icon.png' %}">
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor  %}
+                {% else %}
+                    <tr>
+                        <td colspan="5" style="text-align: center;">Empty Cart</td>
+                    </tr>
+                {% endif %}
+            </tbody>
+            
+        </table>
+
+        {% if cartItems|length %}
+            <div id="wrapper-checkout-btns" style="display: flex;flex-direction: row;justify-content: space-between;align-items: center;">
+                <div class="wrapper-enjin-address">
+                    <input type="text" id="enjin-address" placeholder="Please enter your Enjin Address"/>
+                    <span style="color: red;font-size: 2em;">*</span>
+                    <p style="color: red;font-size: 1.5em;display:none;">Please fill out this field.</p>
+                </div>
+                <button id="btn-checkout-stripe" class="btn btn-color">
+                    <span>Check Out (Stripe)</span>
+                </button>
+
+                <div id="connected" style="display: none">
+                    <input type="hidden" name="user_name" value="{{request.session.name}}">
+                    <input type="hidden" name="user_email" value="{{request.session.email}}">
+                    <button id="btn-checkout-crypto" class="btn">
+                        <span>Send</span>
+                        <span id="eth-amount">0.00</span>
+                        <span>ETH</span>
+                    </button>
+
+                    <button id="btn-disconnect" class="btn">
+                        <span>Disconnect Wallet</span>
+                    </button>
+                </div>
+                
+                <div id="prepare">
+                    <button id="btn-connect" class="btn">
+                        <span>Connect Wallet</span>
+                    </button>
+                </div>
+            </div>
+        {% endif %}
+        <input type="hidden" name="wallet_address" value="{{wallet_address}}" />
+    </div>
+</section>
+
+<script src="https://unpkg.com/web3@latest/dist/web3.min.js"></script>
+<script type="text/javascript" src="https://unpkg.com/web3modal"></script>
+<!-- <script type="text/javascript" src="https://unpkg.com/evm-chains/lib/index.js"></script> -->
+<script type="text/javascript" src="https://unpkg.com/@walletconnect/web3-provider"></script>
+<script type="text/javascript" src="https://unpkg.com/fortmatic@2.0.6/dist/fortmatic.js"></script>
+
+<script src="{% static 'public/js/metamask.js' %}"></script>
+
+<script src="https://js.stripe.com/v3/"></script>
+<script type="text/javascript">
+    async function getBtcPrice(endpoint) {
+        const res = await fetch(endpoint);
+        const data = await res.json();
+        return data;
+    }
+    
+    getBtcPrice('https://api.coinbase.com/v2/prices/ETH-USD/sell')
+    .then(result => {
+        var total_price = "{{total_price}}";
+        var eth_amount = Math.round((total_price / result.data.amount) * 1000) / 1000;
+        $("#eth-amount").text(eth_amount);
+    });
+
+    // Create an instance of the Stripe object with your publishable API key
+    var stripe = Stripe('{{ key }}');
+
+    $("#enjin-address").keypress(function() {
+        var len = $(this).length;
+        if(len > 0) {
+            $(".wrapper-enjin-address p").hide();
+        } else {
+            $(".wrapper-enjin-address p").show();
+        }
+    });
+
+    $("#btn-checkout-stripe").click(function() {
+        var enjin_address = $("#enjin-address").val();
+        var email_address = '{{ request.session.email }}';
+
+        if(email_address.length == 0) {
+            alert("You don't have an email address. \n So you can't checkout.\n Please fill out an email address and then go on Re-login.");
+            return false;
+        }
+        if(enjin_address.length == 0) {
+            $(".wrapper-enjin-address p").show();
+            return false;
+        }
+        // Create a new Checkout Session using the server-side endpoint you
+        // created in step 3.
+        fetch("/api/checkout-stripe-session/{{ request.session.name }}/", {
+            method: 'POST',
+            headers: {
+                "Content-Type": "application/json",
+                'X-CSRFToken': $('input[name="csrfmiddlewaretoken"]').val()
+            },
+            body: JSON.stringify(
+                { 
+                    email: email_address,
+                    enjin_address: enjin_address
+                }
+            )
+        })
+            .then(function (response) {
+                return response.json();
+            })
+            .then(function (session) {
+                return stripe.redirectToCheckout({ sessionId: session.sessionId });
+            })
+            .then(function (result) {
+                // If `redirectToCheckout` fails due to a browser or network
+                // error, you should display the localized error message to your
+                // customer using `error.message`.
+                if (result.error) {
+                    alert(result.error.message);
+                }
+            })
+            .catch(function (error) {
+                console.error('Error:', error);
+            });
+    });
+
+    $(".btn-remove-cartItem").click(function() {
+        var cartItem_id = $(this).data('id');
+        var row = $(this).parent().parent().parent();
+        var current_amount = parseFloat($(this).parent().parent().prev().text().split(" ")[1]);
+        if (confirm('Are you sure you want to delete this item?')) {
+          fetch("/api/cartitems/delete/", {
+            method: 'POST',
+            headers: {
+                "Content-Type": "application/json",
+                'X-CSRFToken': $('input[name="csrfmiddlewaretoken"]').val()
+            },
+            body: JSON.stringify(
+                { cartItem_id: cartItem_id }
+            )
+          })
+            .then(function (response) {
+              return response.json();
+            })
+            .then(function (result) {
+              if(result.status) {
+                $("#cart-badge").text(parseInt($("#cart-badge").text()) - parseInt($('div[data-product-id="'+result.product_id+'"] .cart-item-product-quantity').text()));
+                if(parseInt($("#cart-badge").text()) == 0) $("#cart-badge").hide();
+                $("#total-amount").text(parseFloat($("#total-amount").text()) - current_amount);
+                $('div[data-product-id="'+result.product_id+'"]').remove();
+                row.remove();
+                var rows = $('.cart-table tbody tr').length;
+                if(rows == 0) {
+                    $("#wrapper-checkout-btns").hide();
+                    $("#wrapper-total-price").hide();
+                    $('.cart-table tbody').append(`<tr>
+                            <td colspan="5" style="text-align: center;">Empty Cart</td>
+                        </tr>`);
+                }
+              }
+            })
+            .catch(function (error) {
+                console.error('Error:', error);
+            });
+        }
+      });
+</script>
+
+{% endblock content %}

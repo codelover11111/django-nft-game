@@ -1,0 +1,43 @@
+{% extends 'backend/bases/mgmt.html' %}
+
+{% block content %}
+<div class="row justify-content-center team">
+  <div class="col-md-6">
+    {% if error %}
+    <div class="alert alert-danger">
+      <p>{{ error }}</p>
+    </div>
+    {% endif %}
+
+    <h2>Add new member</h2>
+
+    <form method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+
+      <div class="form-row">
+        <div class="form-group col-md-4">
+          <label for="member_name">Name</label>
+          <input id="member_name" type="text" class="form-control" name="name" required="true">
+        </div>
+        <div class="form-group col-md-6">
+          <label for="member_role">Role</label>
+          <input id="member_role" type="text" class="form-control" name="role" required="true">
+        </div>
+        <div class="form-group col-md-2">
+          <label for="member_position">Position</label>
+          <input id="member_position" type="text" class="form-control" name="position" />
+        </div>
+      </div>
+
+      <div class="form-group btn-team-member-image">
+        <label for="member_image">Image</label>
+        <input type="file" name="image" class="form-control-file" id="member_image" required />
+      </div>
+
+      <hr>
+
+      <button class="btn btn-success btn-add-team-member">Add</button>
+    </form>
+  </div>
+</div>
+{% endblock content %}

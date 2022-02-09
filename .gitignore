@@ -1,0 +1,12 @@
+.idea
+.env
+__pycache__
+*.sqlite3
+mainsite/migrations
+SMSite/static
+SMSite/media
+venv
+run.sh
+file.pid
+venv
+*.log

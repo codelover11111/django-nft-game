@@ -1,0 +1,105 @@
+{% extends "frontend/bases/main.html" %}
+{% load static %}
+{% load markdown_extras %}
+{% load mathfilters %}
+
+{% block content %}
+
+<section class="account" style="background-image: url('{% static 'public/assets/bg-9.jpg' %}');min-height:800px;">
+    <div class="account-wrap" style="max-width: 1430px;">
+        <h1>My Cart</h1>
+
+        <table class="attr-table cart-table">
+            <thead>
+                <tr style="background: #e41092;">
+                    <td>Product name</td>
+                    <td>Quantity</td>
+                    <td>Price</td>
+                    <td>Amount</td>
+                    <td></td>
+                </tr>
+            </thead>
+            <tbody>
+                {% if cartItems|length %}
+                    {% for cartItem in cartItems %}
+                        <tr>
+                            <td style="vertical-align: middle;">
+                                <div style="display: flex;align-items: center;">
+                                    <img src="/media/{{cartItem.image}}" style="width:50px;margin-right:5px;">
+                                    <span>{{cartItem.title}}</span>
+                                </div>
+                            </td>
+                            <td>{{cartItem.quantity}}</td>
+                            <td>$ {{cartItem.price}}</td>
+                            <td>$ {{cartItem.quantity|mul:cartItem.price}}</td>
+                            <td>
+                                <div class="remove-cartBtn-wrapper">
+                                    <button data-id="{{cartItem.id}}" class="btn-remove-cartItem" style="background: transparent;border: none;cursor: pointer;">
+                                        <img src="{% static 'public/assets/remove-icon.png' %}">
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor  %}
+                {% else %}
+                    <tr>
+                        <td colspan="5" style="text-align: center;">Empty Cart</td>
+                    </tr>
+                {% endif %}
+            </tbody>
+            
+        </table>
+        {% if cartItems|length %}
+            <div id="wrapper-checkout-btns">
+                <span class="text-white">Total Amount : $ <span id="total-amount">{{total_price}}</span></span>
+                <a href="/checkout/" class="btn btn-color  float-right">
+                    <span>Check Out</span>
+                </a>
+            </div>
+        {% endif %}
+    </div>
+</section>
+
+<script type="text/javascript">
+    $(".btn-remove-cartItem").click(function() {
+        var cartItem_id = $(this).data('id');
+        var row = $(this).parent().parent().parent();
+        var current_amount = parseFloat($(this).parent().parent().prev().text().split(" ")[1]);
+        if (confirm('Are you sure you want to delete this item?')) {
+          fetch("/api/cartitems/delete/", {
+            method: 'POST',
+            headers: {
+                "Content-Type": "application/json",
+                'X-CSRFToken': $('input[name="csrfmiddlewaretoken"]').val()
+            },
+            body: JSON.stringify(
+                { cartItem_id: cartItem_id }
+            )
+          })
+            .then(function (response) {
+              return response.json();
+            })
+            .then(function (result) {
+              if(result.status) {
+                $("#cart-badge").text(parseInt($("#cart-badge").text()) - parseInt($('div[data-product-id="'+result.product_id+'"] .cart-item-product-quantity').text()));
+                if(parseInt($("#cart-badge").text()) == 0) $("#cart-badge").hide();
+                $("#total-amount").text(parseFloat($("#total-amount").text()) - current_amount);
+                $('div[data-product-id="'+result.product_id+'"]').remove();
+                row.remove();
+                var rows = $('.cart-table tbody tr').length;
+                if(rows == 0) {
+                    $("#wrapper-checkout-btns").hide();
+                    $('.cart-table tbody').append(`<tr>
+                            <td colspan="5" style="text-align: center;">Empty Cart</td>
+                        </tr>`);
+                }
+              }
+            })
+            .catch(function (error) {
+                console.error('Error:', error);
+            });
+        }
+      });
+</script>
+
+{% endblock content %}

@@ -1,0 +1,236 @@
+{% extends "backend/bases/layout.html" %}
+{% load static %}
+{% load local_date %}
+
+{% block content %}
+<div class="main-content market_list_section">
+    <div class="trading_list_outer market_outer market_sort"> 
+        <div class="row my-2 market-sort">
+            <div class="col">
+                <form class="form" id="market-search">
+                    <div>
+                        <span>Filter</span>
+                        <a class="sort-reset" onclick="location=location.pathname"><span>Reset</span></a>
+                    </div>
+                    <div class="col-sm-4 mt-2 input-search">
+                        <i class="fa fa-search icon"></i>
+                        <input type="text" name="q" class="form-control" placeholder="Search">
+                    </div>
+                    <div class="mt-4">
+                        <p>Sort</p>
+                        <div>
+                            <label class="market-create-checkmark">
+                                <input type="radio" name="sort" value="" id="radio-none" />
+                                <span class="checkmark" for="radio-none"></span>
+                            </label>
+                            <label for="radio-none" class="sort-label">None</label>
+                        </div>
+                        <div>
+                            <label class="market-create-checkmark">
+                                <input type="radio" name="sort" value="name" id="radio-name" />
+                                <span class="checkmark" for="radio-name"></span>
+                            </label>
+                            <label for="radio-name" class="sort-label">By Name</label>
+                        </div>
+                        <div>
+                            <label class="market-create-checkmark">
+                                <input type="radio" name="sort" value="bits" id="radio-bits">
+                                <span class="checkmark" for="radio-bits"></span>
+                            </label>
+                            <label for="radio-bits" class="sort-label">By Price</label>
+                        </div>
+                        <div>
+                            <label class="market-create-checkmark">
+                                <input type="radio" name="sort" value="expiration" id="radio-expiration">
+                                <span class="checkmark" for="radio-expiration"></span>
+                            </label>
+                            <label for="radio-expiration" class="sort-label">By Expiration date</label>
+                        </div>
+                        <div>
+                            <label class="market-create-checkmark">
+                                <input type="radio" name="sort" value="quantity" id="radio-quantity">
+                                <span class="checkmark" for="radio-quantity"></span>
+                            </label>
+                            <label for="radio-quantity" class="sort-label">By Quantity</label>
+                        </div>
+                    </div>
+        
+                    <div class="my-2">
+                        <div>
+                            <label class="market-create-checkmark reverse-checkmark">
+                                <input type="checkbox" name="order" value="reverse" id="check-reverse">
+                                <span class="checkmark" for="check-reverse"></span>
+                            </label>
+                            <label for="check-reverse" class="sort-label">Reverse</label>
+                        </div>
+                    </div>
+                    <button class="dashboard-btn mt-2" form="market-search"><span>Search</span></button>
+                    {% if word %}
+                    <div class="showing-result mt-2">
+                        <p class="strong">Showing results for "{{word}}"</p>
+                    </div>
+                    {% endif %}
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="trading_list_outer market_outer market-list"> 
+        <h2 class="section-title my-3">Marketplace</h2>
+        <div class="market-header-btn-group">
+            <div class="submit-offer">
+                <a class="dashboard-btn" href="/user/market/create/sell/">
+                    <span>Create an offer</span>
+                </a>
+            </div>
+            <div class="submit-offer">
+                <a class="dashboard-btn" href="/user/market/history/">
+                    <span>Market History</span>
+                </a>
+            </div>
+        </div>
+        <div class="row market_outer_content">
+            {% if errors %}
+            <div class="col-12">
+                <div class="card">
+                    {% for error in errors %}
+                    <p class="no-offer">{{error}}</p>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+            {% if offers %}
+            <div class="col-12">
+                <div class="card content-header">
+                    <div class="medias-group">
+                        <div class="medias">
+                            <p>Name</p>
+                        </div>
+                    </div>
+                    <div class="item-input">
+                        <p>Qty</p>
+                    </div>
+                    <div class="item-input">
+                        <p>Bits</p>
+                    </div>
+                    <div class="item-input">
+                        <p>Valid for</p>
+                    </div>
+                    <div class="btn-group">
+                    </div>
+                </div>
+                {% for offer in offers %}
+                    {% if offer.entry.details and offer.entry.details != "None" %}
+                    <div
+                        class="card" 
+                        id="{{offer.obj.uuid}}"
+                        data-bs-toggle="popover"
+                        data-bs-trigger="hover"
+                        data-bs-html="true"
+                        data-bs-placement="top"
+                        title="Unique traits"
+                        data-bs-content="{{offer.entry.details}}" >
+                    {% else %}
+                    <div
+                        class="card" 
+                        id="{{offer.obj.uuid}}" >
+                    {% endif %}
+                        <div class="medias-group">
+                            <div class="medias">
+                                {% if offer.entry.image %}
+                                <img class="mr-3" src="{{offer.entry.image}}" alt="{{offer.entry.name}}">
+                                {% else %}
+                                <img class="mr-3" src="https://via.placeholder.com/75?text=No+Image" alt="{{offer.entry.name}}">
+                                {% endif %}
+                                <div class="media-body">
+                                    {% if offer.entry.details and offer.entry.details != "None" %}
+                                    <p class="text-success">{{offer.entry.name}}</p>
+                                    <p class="description">By: {{offer.obj.player_a.nick_name}}</p>
+                                    {% else %}
+                                    <p>{{offer.entry.name}}</p>
+                                    <p class="description">By: {{offer.obj.player_a.nick_name}}</p>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="item-input">
+                            <input type="text" class="form-control" aria-describedby="emailHelp" placeholder="0" value="{{offer.entry.amount}}" disabled />
+                        </div>
+                        <div class="item-input">
+                            <input type="text" class="form-control" aria-describedby="emailHelp" placeholder="0" value="{{offer.entry.asking}}" disabled />
+                        </div>
+                        <div class="item-input">
+                            <p>{{offer.expires|delta}}</p>
+                        </div>
+                        <div class="btn-group">
+                            <div class="buy-btn">
+                                {% if offer.mine %}
+                                <button class="dashboard-btn" form="cancel_sale" name="offer" value="{{offer.obj.uuid}}"><span>CANCEL</span></button>
+                                {% else %}
+                                <a class="dashboard-btn" data-id="{{offer.obj.uuid}}" onclick="purchase(this)">
+                                    <span>Buy</span>
+                                </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                {% empty %}
+                <div class="col-12">
+                    <div class="card">
+                        <p class="no-offer">There are no offers in the market yet.</p>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+        <div class="row count">
+            <nav aria-label="Page navigation example">
+                <ul class="pagination">
+                {% if offers.has_previous %}
+                  <li class="page-item"><a class="page-link" href="?q={{word}}&sort={{sort}}&order={{order}}&page={{offers.previous_page_number}}">Previous</a></li>
+                {% endif %}
+                  <li class="page-item"><a class="page-link" href="#">{{offers.number}} of {{offers.paginator.num_pages}}</a></li>
+                {% if offers.has_next %}
+                  <li class="page-item"><a class="page-link" href="?q={{word}}&sort={{sort}}&order={{order}}&page={{offers.next_page_number}}">Next</a></li>
+                {% endif %}
+                </ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+<form action="./cancel/" id="cancel_sale" method="post">
+    {% csrf_token %}
+</form>
+
+<script>
+    function purchase (e) {
+        e.disabled = true
+        const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+        const request = new Request(
+            `/user/market/purchase/${e.dataset.id}/`,
+            { headers: { 'X-CSRFToken': csrftoken }}
+        );
+
+        fetch(request, {
+            method: 'POST',
+            mode: 'same-origin',
+            data: `csrfmiddlewaretoken=${csrftoken}`,
+        }).then(function (response) {
+            return response.json()
+        }).then(function (data) {
+            if (data.status && data.data === "COMPLETED") {
+                alert("done")
+                const element = document.getElementById(e.dataset.id)
+                element.remove()
+            } else {
+                if (data.error === 'OFFER_EXPIRED') { location.reload() }
+                else { alert(data.error) }
+            }
+        });
+        if (e) e.disabled = false
+    }
+</script>
+{% endblock content %}

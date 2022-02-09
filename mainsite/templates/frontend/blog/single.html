@@ -1,0 +1,56 @@
+{% extends "frontend/bases/main.html" %}
+{% load static %}
+{% load markdown_extras %}
+
+
+{% block content %}
+<div class="main-content">
+    <div class="letest_news single-news">
+        <div class="container">
+            <div class="sec_title">
+                <h1><span>LATEST</span> NEWS</h1>
+                <p>Learn what is happening in and around Space Misfits.</p>
+            </div>
+
+            {% if post and post.cover %}
+            <div class="breadcumbs">
+                <span>HOME / </span><a href="#">{{ post.title | safe }}</a>
+            </div>
+            <div class="user_desc">
+                <ul>
+                    <li>{{ post.created_at | date }}</li>
+                </ul>
+            </div>
+
+            <div class="img_block">
+                <img src="{{ post.cover.url }}">
+            </div>
+            <div class="news_desc">
+                <h2>{{ post.title | safe }}</h2>
+                <p>{{ post.content | markdown | safe }}</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <section class="newslatter_section">
+        <div class="container">
+            <div class="section-content text-center">
+                <h2 class=""><span class="perpal-text">NEWSLETTER</span></h2>
+                <p class="section-description text-white">SIGN UP TO GET UPDATES.</p>
+            </div>
+            <div class="form_block">
+                <form id="news_letter_form">
+                    {% csrf_token %}
+                    <div class="input-filed">
+                        <input id="subscribe_email" type="email" placeholder="Enter your Email" required />
+                    </div>
+                    <button class="btn btn-color text-uppercase" type="submit"><span>Subscribe</span></button>
+
+                </form>
+            </div>
+        </div>
+    </section>
+</div>
+
+{% endblock content %}

@@ -1,0 +1,155 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Misfits</title>
+    <link rel="stylesheet" href="{% static 'public/style/fonts.css' %}">
+    <link rel="stylesheet" href="{% static 'public/style/reset.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-nice-select/1.1.0/css/nice-select.min.css" integrity="sha512-CruCP+TD3yXzlvvijET8wV5WxxEh5H8P4cmz0RFbKK6FlZ2sYl3AEsKlLPHbniXKSrDdFewhbmBK5skbdsASbQ==" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.perfect-scrollbar/1.5.0/css/perfect-scrollbar.min.css" integrity="sha512-n+g8P11K/4RFlXnx2/RW1EZK25iYgolW6Qn7I0F96KxJibwATH3OoVCQPh/hzlc4dWAwplglKX8IVNVMWUUdsw==" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.css" integrity="sha512-yHknP1/AwR+yx26cB1y0cjvQUMvEa2PFzt1c9LlS4pRQ5NOTZFWbhBig+X9G9eYW/8m0/4OXNx8pxJ6z57x0dw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick-theme.min.css" integrity="sha512-17EgCFERpgZKcm0j0fEq1YCJuyAWdz9KUtv1EjVuaOz8pDnh/0nZxmU6BBXwaaxqoi9PQXnRWqlcDB027hgv9A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="{% static 'public/style/style.css' %}">
+    <script src="{% static 'public/js/jquery-3.2.1.min.js' %}"></script>
+</head>
+<body>
+    <!-- Header start -->
+    <header class="header">
+
+        <a href="/" class="header-logo">
+            <img src="{% static 'public/assets/logo.png' %}" alt="Space Misfits logo">
+        </a>
+
+        <nav>
+            <ul class="header-nav">
+                <li><a href="/">Home</a></li>
+                <!-- <li><a href="/#faq">FAQ</a></li> -->
+                <li><a href="/news/">News</a></li>
+                <!-- <li><a href="/#community">Community</a></li> -->
+                <!-- <li><a id="header-nav-team" href="/team/members/">Team</a></li> -->
+                <li><a href="/tutorial/">Tutorial</a></li>
+                <li><a href="/shop/">Shop</a></li>
+                <li><a href="/download/">Download</a></li>
+            </ul>
+        </nav>
+
+        <div class="header-links">
+        {% if request.session.name %}
+            {% if request.session.is_admin %}
+                <a href="/mgmt/" class="my-account"><span>[Admin] {{ request.session.name }}</span></a>
+            {% else %}
+                <a href="/user/" class="my-account"><span>{{ request.session.name }}</span></a>
+            {% endif %}
+            <span class="my-cart">
+                <span id="my-cart-title">
+                    <span id="cart-badge">0</span>
+                    <span>My Cart</span>
+                </span>
+                
+                <div class="mycart-tooltip">
+                    <span class="tooltip-close">x</span>
+                    <div class="cart-body">
+                        
+                    </div>
+                    <div class="cart-footer">
+                        <a href="/shop/cartitems/view/" class="btn btn-color checkout-btn" style="display: block;">View Cart</a>
+                    </div>
+                </div>
+            </span>
+        {% else %}
+            <a href="/signin/" class="my-account"><span>My account</span></a>
+        {% endif %}
+            <a href="/shop/" class="btn"><span>Shop now</span></a>
+        </div>
+
+        <div id="nav-icon">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+
+    </header>
+    <!-- Header end -->
+
+    <!-- Main start -->
+    <main class="main">
+        {% block content %}{% endblock content %}
+    </main>
+    <!-- Main end -->
+
+    <!-- Footer start -->
+    <footer class="footer">
+        <div class="footer-top">
+            <a href="/" class="footer-logo"><img src="{% static 'public/assets/logo-footer.svg' %}" alt=""></a>
+        </div>
+        <div class="copyright">All rights reserved 2021</div>
+        {% csrf_token %}
+    </footer>
+    <!-- Footer end -->
+    
+    <script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-nice-select/1.1.0/js/jquery.nice-select.min.js" integrity="sha512-NqYds8su6jivy1/WLoW8x1tZMRD7/1ZfhWG/jcRQLOzV1k1rIODCpMgoBnar5QXshKJGV7vi0LXLNXPoFsM5Zg==" crossorigin="anonymous"></script>
+    <script src="{% static 'public/js/detectmobilebrowser.js' %}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.perfect-scrollbar/1.5.0/perfect-scrollbar.min.js" integrity="sha512-yUNtg0k40IvRQNR20bJ4oH6QeQ/mgs9Lsa6V+3qxTj58u2r+JiAYOhOW0o+ijuMmqCtCEg7LZRA+T4t84/ayVA==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.js" integrity="sha512-XtmMtDEcNz2j7ekrtHvOVR4iwwaD6o/FUJe6+Zq+HgcCsk3kj4uSQQR8weQ2QVj1o0Pk6PwYLohm206ZzNfubg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="{% static 'public/js/main.js' %}"></script>
+
+    {% if request.session.name %}
+        <script>
+            $.ajaxSetup({
+                headers:
+                { 'X-CSRFToken': $('input[name="csrfmiddlewaretoken"]').val() }
+            });
+
+            $.ajax({
+                url: '/api/cartitems/get/',
+                method: 'GET',
+                headers: {
+                    "Content-Type": "application/json",
+                    'X-CSRFToken': $('input[name="csrfmiddlewaretoken"]').val()
+                },
+                data: { type: "getByUsername", user_id: '{{ request.session.name }}' },
+                success: function (data) {
+                    if(data.myCart.length == 0) {
+                        $("#cart-badge").hide();
+                        return;
+                    }
+                    var item_count = 0;
+                    for(var i = 0; i < data.myCart.length; i++) {
+                        var str = `
+                        <div class="cart-item-row" data-product-id="${data.myCart[i].product_id}">
+                            <div>
+                                <img src="/media/${data.myCart[i].image}">
+                                <span>${data.myCart[i].title}</span>
+                            </div>
+                            <div>
+                                <span>$</span>
+                                <span class="cart-item-product-price">${data.myCart[i].price}</span>
+                                <span> x </span>
+                                <span class="cart-item-product-quantity">${data.myCart[i].quantity}</span>
+                            </div>
+                        </div>`;
+                        item_count += data.myCart[i].quantity;
+                        $(".cart-body").append(str);
+                    }
+                    $("#cart-badge").text(item_count);
+                }
+            });
+
+            // My cart
+            
+            $("#my-cart-title").click(function() {
+                $(".mycart-tooltip").slideDown();
+            });
+
+            $(".mycart-tooltip .tooltip-close").click(function() {
+                $(".mycart-tooltip").slideUp();
+            });
+            
+
+        </script>
+    {% endif %}
+</body>
+</html>

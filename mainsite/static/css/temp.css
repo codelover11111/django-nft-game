@@ -1,0 +1,41 @@
+div {
+  padding: 2px;
+  /*border: 1px solid blue;*/
+  margin: 1px;
+}
+
+.float-center {
+  margin: auto;
+  width: max-content;
+}
+
+.center-text {
+  text-align: center;
+}
+
+.margin-top {
+  margin-top: 15px;
+}
+
+.small-font {
+  font-size: small;
+}
+
+#container {
+  padding: 1px;
+}
+
+#top-bar {
+  min-height: 2em;
+  padding-top: 1em;
+}
+
+/* table */
+thead {
+  background: lightgrey;
+  font-weight: bold;
+}
+
+td {
+  padding: 3px;
+}

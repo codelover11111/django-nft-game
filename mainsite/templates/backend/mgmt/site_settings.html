@@ -1,0 +1,269 @@
+{% extends "backend/bases/mgmt.html" %}
+
+{% block content %}
+<div class="row justify-content-center">
+    {% if success_message %}
+    <div class="alert alert-success">
+      <p>{{ success_message }}</p>
+    </div>
+    {% endif %}
+
+    {% if error_message %}
+    <div class="alert alert-error">
+      <p>{{ error_message }}</p>
+    </div>
+    {% endif %}
+
+    <div class="col-md-8">
+        <h1>Website general settings</h1>
+        <p>Configure the landing page and other general settings</p>
+
+        <hr>
+
+        <form id="settingsUpdateForm" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label class="form-label" for="download_link">Download Link</label>
+                <input type="text" name="download_link" class="form-control" id="download_link" value="{{ settings.download_link }}">
+            </div>
+
+            <hr>
+
+            <h2>Build section</h2>
+
+            <div class="form-group">
+                <label for="build_title" class="form-label">Title</label>
+                <input type="text" name="build_title" id="build_title" class="form-control" value="{{ settings.build_title }}">
+            </div>
+
+            <div class="form-group">
+                <label for="build_description" class="form-label">Description</label>
+                <textarea name="build_description" id="build_description" rows="3" class="form-control">{{ settings.build_description }}</textarea>
+            </div>
+
+            <hr>
+
+            <div class="form-group">
+                <h2>Explore section</h2>
+                <label for="explore_title" class="form-label">Title</label>
+                <input type="text" name="explore_title" id="explore_title" class="form-control" value="{{ settings.explore_title }}">
+            </div>
+
+            <div class="form-group">
+                <label for="explore_description" class="form-label">Description</label>
+                <textarea name="explore_description" id="explore_description" rows="3" class="form-control">{{ settings.explore_description }}</textarea>
+            </div>
+
+            <hr>
+
+            <h2>Fight section</h2>
+
+            <div class="form-group">
+                <label for="fight_title" class="form-label">Title</label>
+                <input type="text" name="fight_title" id="fight_title" class="form-control" value="{{ settings.fight_title }}">
+            </div>
+
+            <div class="form-group">
+                <label for="fight_description" class="form-label">Description</label>
+                <textarea name="fight_description" id="fight_description" rows="3" class="form-control">{{ settings.fight_description }}</textarea>
+            </div>
+
+            <hr>
+
+            <h2>Trade section</h2>
+            
+            <div class="form-group">
+                <label for="trade_title" class="form-label">Title</label>
+                <input type="text" name="trade_title" id="trade_title" class="form-control" value="{{ settings.trade_title }}">
+            </div>
+            
+            <div class="form-group">
+                <label for="trade_description" class="form-label">Description</label>
+                <textarea name="trade_description" id="trade_description" rows="3" class="form-control">{{ settings.trade_description }}</textarea>
+            </div>
+
+            <hr>
+
+            <h2>Videos section</h2>
+            
+            <div class="form-group">
+                <label for="videos_title" class="form-label">Title</label>
+                <input type="text" name="videos_title" id="videos_title" class="form-control" value="{{ settings.videos_title }}">
+            </div>
+                    
+            <div class="form-group">
+                <label for="videos_description" class="form-label">Description</label>
+                <textarea name="videos_description" id="videos_description" rows="3" class="form-control">{{ settings.videos_description }}</textarea>
+            </div>
+            
+            <div class="form-group">
+                <label for="video_title" class="form-label">Video Title</label>
+                <input type="text" name="video_title" id="video_title" class="form-control" value="{{ settings.video_title }}">
+            </div>
+
+            <div class="form-group">
+                <label for="video_thumbnail" class="form-label">Video thumbnail</label>
+                <input type="file" name="video_thumbnail" id="video_thumbnail" class="form-control-file">
+            </div>
+
+            {% if settings.video_thumbnail %}
+            <img src=" {{ settings.video_thumbnail.url }}" alt="" class="img-thumbnail">
+            {% else %}
+            <p>There is no thumbnail for the video</p>
+            {% endif %}
+
+            <div class="form-group">
+                <label for="video_link" class="form-label">Video Link</label>
+                <input type="url" name="video_link" id="video_link" class="form-control" value="{{ settings.video_link }}">
+            </div>
+
+            <div class="form-group">
+                <label for="video_author" class="form-label">Author</label>
+                <input type="text" name="video_author" id="video_author" class="form-control" value="{{ settings.video_author }}">
+            </div>
+
+            <div class="form-group">
+                <label for="video_author_link" class="form-label">Author Channel</label>
+                <input type="url" name="video_author_link" id="video_author_link" class="form-control" value="{{ settings.video_author_link }}">
+            </div>
+
+            <hr>
+
+            <h2>FAQ section</h2>
+
+            <div class="form-group">
+                <label for="faq_title" class="form-label">Title</label>
+                <input type="text" name="faq_title" id="faq_title" class="form-control" value="{{ settings.faq_title }}">
+            </div>
+
+            <input type="hidden" id="faq_content" name="faq_content" value="{{ settings.faq_content }}">
+
+            <div class="form-group">
+                <label for="faq_description" class="form-label">Description</label>
+                <textarea name="faq_description" id="faq_description" rows="3" class="form-control">{{ settings.faq_description }}</textarea>
+            </div>
+            
+            <table id="faq_content_display" class="table table-small">
+            {% for key, value in settings.faq_json.items %}
+                <tr>
+                    <td><b>{{ key }}</b></td>
+                    <td>{{ value }}</td>
+                    <td><input type="button" onclick="removeQA(event)" value="Remove" data-key="${key}" class="btn btn-danger"></td>
+                </tr>
+            {% endfor %}                
+            </table>
+
+            <div class="form-group">
+                <input type="text" id="new_question" placeholder="Question..." class="form-control">
+                <textarea id="new_answer" rows="2" class="form-control" placeholder="Answer...">{{ settings.new_answer }}</textarea>
+            </div>
+
+            <input type="button" id="add_qa" class="btn btn-success" value="Add QA">
+
+            <hr>
+
+            <h2>News section</h2>
+            
+            <div class="form-group">
+                <label for="news_title" class="form-label">Title</label>
+                <input type="text" name="news_title" id="news_title" class="form-control" value="{{ settings.news_title }}">
+            </div>
+
+            <div class="form-group">
+                <label for="news_description" class="form-label">Description</label>
+                <textarea name="news_description" id="news_description" rows="3" class="form-control">{{ settings.news_description }}</textarea>
+            </div>
+
+            <hr>
+
+            <h2>Join section</h2>
+        
+            <div class="form-group">
+                <label for="join_title" class="form-label">Title</label>
+                <input type="text" name="join_title" id="join_title" class="form-control" value="{{ settings.join_title }}">
+            </div>
+
+            <div class="form-group">
+                <label for="join_description" class="form-label">Description</label>
+                <textarea name="join_description" id="join_description" rows="3" class="form-control">{{ settings.join_description }}</textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="telegram_link">Telegram link</label>
+                <input type="url" name="telegram_link" id="telegram_link" class="form-control" value="{{ settings.telegram_link }}">
+            </div>
+                
+            <div class="form-group">
+                <label for="discord_link">Discord link</label>
+                <input type="url" name="discord_link" id="discord_link" class="form-control" value="{{ settings.discord_link }}">
+            </div>
+
+            <hr>
+
+            <h2>Newsletter section</h2>
+
+            <div class="form-group">
+                <label for="newsletter_description">Newsletter description</label>
+                <input type="text" name="newsletter_description" id="newsletter_description" class="form-control" value="{{ settings.newsletter_description }}">
+            </div>
+
+            <hr>
+
+            <button  class="btn btn-primary">Update settings</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    document.querySelector("#add_qa").onclick = (e) => {
+        e.preventDefault()
+    
+        let element = document.querySelector("#faq_content")
+        let faq_content = JSON.parse(element.value || "{}")
+
+        let question = document.querySelector("#new_question").value
+        let answer = document.querySelector("#new_answer").value
+
+        faq_content[question] = answer
+        console.log(faq_content)
+        element.value = JSON.stringify(faq_content)
+
+        document.querySelector("#new_question").value = ''
+        document.querySelector("#new_answer").value = ''
+
+        // insert new question in the view
+        updateFAQList()
+    };
+
+    function updateFAQList() {
+        let faq_content = JSON.parse(document.querySelector("#faq_content").value || "{}")
+        let container = document.querySelector("#faq_content_display")
+
+        let content = Object.entries(faq_content).map(([key, value]) => {
+            return `<tr>
+                <td><b>${key}</b></td>
+                <td>${value}</td>
+                <td><input type="button" onclick="removeQA(event)" value="Remove" data-key="${key}" class="btn btn-danger"></td>
+            </tr>`
+        })
+
+        container.innerHTML = content.join('\n')
+    }
+
+    function removeQA(e) {
+        e.preventDefault()
+
+        if (confirm("Are you sure you want to remove this item?")) {
+            let key = e.target.dataset['key']
+            let element = document.querySelector("#faq_content")
+            let faq_content = JSON.parse(element.value || "{}")
+            
+            delete(faq_content[key])
+            element.value = JSON.stringify(faq_content)
+
+            updateFAQList()
+        }
+    }
+</script>
+{% endblock content %}

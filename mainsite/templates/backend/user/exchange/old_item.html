@@ -1,0 +1,101 @@
+{% extends "backend/bases/user.html" %}
+
+{% block content %}
+    <div class="row">
+      <!--div class="alert alert-secondary col-8">
+        <p>Avoid making too many requests. It's better to do one request with many items, than many requests with one item</p>
+        <p>You can exchange up to 100 items per request</p>
+      </div-->
+
+      <div class="alert alert-warning col-8">
+        <h4>Attention!</h4>
+        <p>There is a issue with telemetry exchange. Stacks of telemetry are exchanged for the same type of telemetry.
+          <b>If you want unique telemetry please exchange one at a time</b>. This bug will be fixed very soon!</p>
+      </div>
+    </div>
+
+    <div class="row px-4">
+      <div class="col-10">
+      {% if error_message %}
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+          <strong>Something happened!</strong> {{error_message}}
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      {% endif %}
+
+      {% if success_message %}
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+          <strong>Great!</strong> {{success_message}}
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      {% endif %}
+      </div>
+
+    {% if has_wallet == 1 and item %}
+      <div class="col col-md-4">
+        <h4>{{item.item.name}}</h4>
+        <p>Items available: {{item.amount|floatformat:"0"}}</p>
+
+        <form method="post">
+          {% csrf_token %}
+          <div class="form-group">
+            <label for="tokens_quantity">Tokens to receive</label>
+            <input type="number" class="form-control" name="tokens_quantity" onchange="updateItemsAmount(this)" id="tokens_quantity" min="0" max="100" value="0">
+          </div>
+
+          <div class="form-group">
+            <label for="items_quantity">Items cost</label>
+            <input type="number" class="form-control" id="items_quantity" value="0" disabled>
+          </div>
+
+          <br>
+          <button name="submit" class="btn btn-primary">Exchange items</button>
+        </form>
+      </div>
+
+      <div class="col col-md-8">
+      {% if item.item.tokens_metadata.keep_surprise %}
+        <h4>Surprise Token</h4>
+        <p>You will receive a random token on exchange</p>
+      {% else %}
+        <h4>Exchange for {{token.name}}</h4>
+        {% if token.nonFungible %}
+        <p>This token is an NFT</p>
+        {% endif %}
+
+        {% if token.metadata %}
+        <p><i>{{token.metadata.description}}</i></p>
+        <img src="{{token.metadata.image|default:"https://placeholder.pics/svg/256"}}" alt="{{token.metadata.description}}" width="256" class="rounded img-thumbnail">
+        {% endif %}
+      {% endif %}
+      </div>
+
+    {% elif has_wallet == 0 %}
+      <div class="col col-md-8">
+        <div class="alert alert-danger" role="alert">
+          <strong>Sorry!</strong> You need to have an Enjin wallet linked to be able to exchange your items
+        </div>
+      </div>
+    {% endif %}
+    </div>
+
+
+    {% if has_wallet == 1 and item %}
+    <script>
+      const xrate = {{item.item.tokens_metadata.items_per_token}}
+      const the_form = document.forms[0]
+
+      function updateItemsAmount(e) {
+        document.querySelector("#items_quantity").value = parseInt(parseFloat(e.value)*xrate)
+        the_form.elements.submit.disabled = document.querySelector("#items_quantity").value > {{item.amount|floatformat:"0"}}
+      }
+
+      the_form.onsubmit = () => {
+        the_form.elements.submit.disabled = true
+        let status = confirm("Are you sure you want to exchange the items?")
+        the_form.elements.submit.disabled = status
+        return status
+      }
+    </script>
+    {% endif %}
+{% endblock content %}

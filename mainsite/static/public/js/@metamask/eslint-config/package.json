@@ -1,0 +1,64 @@
+{
+  "_from": "@metamask/eslint-config@^2.0.0",
+  "_id": "@metamask/eslint-config@2.2.0",
+  "_inBundle": false,
+  "_integrity": "sha512-8iOvryX4n1r+LKcpmCr9c05myBd+PmNRzkZNIukhmR7GzNhUFCozj5e6mqLFKWTPs1RBaJcovsZl0VTbZnbxuw==",
+  "_location": "/@metamask/eslint-config",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "range",
+    "registry": true,
+    "raw": "@metamask/eslint-config@^2.0.0",
+    "name": "@metamask/eslint-config",
+    "escapedName": "@metamask%2feslint-config",
+    "scope": "@metamask",
+    "rawSpec": "^2.0.0",
+    "saveSpec": null,
+    "fetchSpec": "^2.0.0"
+  },
+  "_requiredBy": [
+    "#DEV:/"
+  ],
+  "_resolved": "https://registry.npmjs.org/@metamask/eslint-config/-/eslint-config-2.2.0.tgz",
+  "_shasum": "76c09ea5fedf4429b922e7b61b32c34a89a2cd56",
+  "_spec": "@metamask/eslint-config@^2.0.0",
+  "_where": "D:\\works\\web develop\\p2p_metamask\\simple-dapp-tutorial-master\\start",
+  "author": {
+    "name": "Whymarrh Whitby",
+    "email": "whymarrh.whitby@gmail.com"
+  },
+  "bugs": {
+    "url": "https://github.com/MetaMask/eslint-config/issues"
+  },
+  "bundleDependencies": false,
+  "deprecated": false,
+  "description": "Shareable MetaMask ESLint config",
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^2.20.0",
+    "@typescript-eslint/parser": "^2.17.0",
+    "eslint": "^6.8.0",
+    "eslint-plugin-import": "^2.20.1",
+    "eslint-plugin-jest": "^23.6.0",
+    "eslint-plugin-mocha": "^6.2.2",
+    "typescript": "^3.7.5"
+  },
+  "files": [
+    "config/"
+  ],
+  "homepage": "https://github.com/MetaMask/eslint-config#readme",
+  "license": "MIT",
+  "main": "config/index.js",
+  "name": "@metamask/eslint-config",
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/",
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MetaMask/eslint-config.git"
+  },
+  "scripts": {
+    "test": "eslint ."
+  },
+  "version": "2.2.0"
+}

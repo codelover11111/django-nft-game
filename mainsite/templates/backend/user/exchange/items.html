@@ -1,0 +1,76 @@
+{% extends "backend/bases/layout.html" %}
+
+{% block content %}
+<!-- Start app main Content -->
+<div class="main-content">
+  <div class="items_outer">
+    <div class="section-body">
+      <h2 class="section-title my-3">Items &amp; Bits</h2>
+      {% if has_inventory %}
+      <div class="row">
+        <div class="col-10">
+          {% if error_message %}
+          <div
+            class="alert alert-danger alert-dismissible fade show"
+            role="alert"
+          >
+            <strong>Error</strong> {{error_message}}
+          </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="row pb-2">
+        <div class="col">
+          <span class="lead"><b>Bits</b>: {{bits}}</span>
+        </div>
+      </div>
+
+      <h4 class="section-title my-3">Inventory<!--button class="dashboard-btn" form="regroup_form"><span>Regroup stacks</span></button--></h4>
+
+      <form action="/user/items/regroup/" id="regroup_form" method="post">
+        {% csrf_token %}
+      </form>
+
+      <div class="row">
+        {% for item in items %}
+        <div class="col-md-6 col-lg-3 col-xl-3 mb-3">
+          <div class="card card-large-icons w-100 h-100">
+            <div class="card-icon bg-primary text-white">
+              <i class="fa fa-search"></i>
+            </div>
+            <div class="card-body">
+              <h5>{{item.item.name}}</h5>
+              <div class="divide"></div>
+              <p>x{{item.amount}} in {{item.current_carry_type}}</p>
+              <p>
+                Total weight: {% widthratio item.amount 1 item.item.weight %}
+              </p>
+              {% if 'exchange' in item.item.tokens_metadata.permissions and player.can_exchange %}
+              <a
+                class="dashboard-btn mt-2"
+                href="/user/exchange/item/{{item.id}}/"
+              >
+                <span>Exchange »</span>
+              </a>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+
+      {% else %}
+      <div class="row">
+        <div class="col-md-10">
+          <div class="alert alert-primary text-center">
+            You are seeing this because you haven't logged into the game.<br />
+            Log in and play a little, then try again.
+          </div>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock content %}

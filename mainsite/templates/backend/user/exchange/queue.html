@@ -1,0 +1,67 @@
+{% extends "backend/bases/layout.html" %}
+{% load local_date %}
+{% block content %}
+<!-- Start app main Content -->
+<div class="main-content">
+  <div class="tran_outer">
+    <h2 class="section-title my-3">Transactions Queue</h2>
+
+    <div class="Queue_sec">
+      <div class="card">
+        <div class="card-body p-0">
+          <div class="table-responsive">
+            <table class="table table-striped v_center">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Type</th>
+                  <th>Operation</th>
+                  <th>Status</th>
+                  <th>Performed at</th>
+                  <th>Last update</th>
+                </tr>
+              </thead>
+              <tbody id="tx_q">
+                {% for transaction in transactions %}
+                <tr>
+                  <td><b>{{transaction.id}} TX: {{transaction.app_transaction_id}}</b></td>
+                  <td class="align-middle">{{transaction.action}}</td>
+                  <td>
+                    Exchanged {{transaction.q_items}} <b>{{transaction.item_name}}</b> for {{transaction.q_tokens}} <b>{{transaction.token_name}}</b>
+                  </td>
+                  <td>{{transaction.status}}</td>
+                  <td>{{transaction.created_at|to_utc}}</td>
+                  <td>{{transaction.updated_at|to_utc}}</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  var txq = document.getElementById('tx_q');
+
+  var interval = setInterval(async () => {
+    const data = await fetch('/queue/status/');
+    const response = await data.json();
+
+    if (response.status) {
+      response.data.forEach((o) => {
+        let e = txq.querySelector(`#tx-${o.id}`);
+        console.log(e);
+
+        if (e) {
+          // first child
+          e.querySelector('.tx-status').innerText = o.status;
+          e.querySelector('.tx-updated').innerText = o.updated_at;
+        }
+      });
+    }
+  }, 1000);
+</script>
+{% endblock content %}

@@ -1,0 +1,59 @@
+{% extends "frontend/bases/main.html" %}
+{% load static %}
+{% load markdown_extras %}
+
+
+{% block content %}
+<div class="main-content">
+    <div class="video_page">
+        <div class="container">
+            <div class="sec_title">
+                <h1><span>SPACE MISFITS</span> TUTORIALS</h1>
+                <p>Tutorials to get you started.</p>
+            </div>
+
+            {% for tutorial in tutorials %}
+                {% if tutorial.poster and tutorial.video %}
+                <div class="video_blocks">
+                    <div class="res_video">
+                        <video id="my-video" class="video-js" controls preload="auto" width="640" height="264"
+                            poster="{{ tutorial.poster.url}}" data-setup="{}">
+                            <source src="{{ tutorial.video.url }}" type="video/mp4" />
+                            <source src="{{ tutorial.video.url }} " type="video/webm" />
+                            <p class="vjs-no-js">To view this video please enable JavaScript, and consider upgrading
+                                to a
+                                web browser that <a href="https://videojs.com/html5-video-support/"
+                                    target="_blank">supports HTML5 video</a>
+                            </p>
+                        </video>
+                    </div>
+                    <h4>{{ tutorial.title | safe }}</h4>
+                </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+
+    </div>
+
+
+
+    <section class="newslatter_section">
+        <div class="container">
+            <div class="section-content text-center">
+                <h2 class=""><span class="perpal-text">NEWSLETTER</span></h2>
+                <p class="section-description text-white">SIGN UP TO GET UPDATES.</p>
+            </div>
+            <div class="form_block">
+                <form id="news_letter_form">
+                    {% csrf_token %}
+                    <div class="input-filed">
+                        <input id="subscribe_email" type="email" placeholder="Enter your Email" required />
+                    </div>
+                    <button class="btn btn-color text-uppercase" type="submit"><span>Subscribe</span></button>
+
+                </form>
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock content %}

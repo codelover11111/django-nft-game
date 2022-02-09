@@ -1,0 +1,108 @@
+{% extends "backend/bases/layout.html" %}
+{% load local_date %}
+{% load static %}
+
+{% block content %}
+<!-- Start app main Content -->
+<div class="main-content">
+    <div class="trading_list_outer market_history_outer"> 
+        <h2 class="section-title my-3">Marketplace</h2>
+        <div class="market-header-btn-group">
+            <div class="submit-offer">
+                <a class="dashboard-btn" href="/user/market/create/sell/">
+                    <span>Create an offer</span>
+                </a>
+            </div>
+            <div class="submit-offer">
+                <a class="dashboard-btn" href="/user/market/history/">
+                    <span>Market History</span>
+                </a>
+            </div>
+        </div>
+        <div class="history-group">
+            <div class="row market_outer_content my-purchase-history">
+                <p class="history-subtitle">My Purchase History</p>
+                {% for offer in purchased %}
+                    {% if offer.item.details and offer.item.details != "None" %}
+                    <div class="col-12"
+                        data-bs-toggle="popover"
+                        data-bs-trigger="hover"
+                        data-bs-html="true"
+                        data-bs-placement="top"
+                        title="Unique traits"
+                        data-bs-content="{{offer.item.details}}">
+                    {% else %}
+                    <div class="col-12">
+                    {% endif %}
+                        <div class="card">
+                            <div class="medias-group">
+                                <div class="medias">
+                                    {% if offer.item.image %}
+                                    <img class="mr-3" src="{{offer.item.image}}" alt="{{offer.item.name}}">
+                                    {% else %}
+                                    <img class="mr-3" src="https://via.placeholder.com/75?text=No+Image" alt="{{offer.item.name}}">
+                                    {% endif %}
+                                    <div class="media-body">
+                                        <div class="item-title">
+                                            <p>{{offer.item.name}} | <strong>{{offer.item.asking}} BITS</strong> x{{offer.item.amount}}</p>
+                                        </div>
+                                        <div class="line"></div>
+                                        <p class="description">{{offer.state}}, {{offer.updated_at|to_utc}}</p>
+                                        <p class="small text-danger">{{offer.failed_reason}}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+            <div class="row market_outer_content my-created-offers-history">
+                <p class="history-subtitle">My created Offers History</p>
+                {% for offer in created %}
+                {% if offer.item.details and offer.item.details != "None" %}
+                <div class="col-12"
+                    data-bs-toggle="popover"
+                    data-bs-trigger="hover"
+                    data-bs-html="true"
+                    data-bs-placement="top"
+                    title="Unique traits"
+                    data-bs-content="{{offer.item.details}}">
+                {% else %}
+                <div class="col-12">
+                {% endif %}
+                    <div class="card">
+                        <div class="medias-group">
+                            <div class="medias">
+                                {% if offer.item.image %}
+                                <img class="mr-3" src="{{offer.item.image}}" alt="{{offer.item.name}}">
+                                {% else %}
+                                <img class="mr-3" src="https://via.placeholder.com/75?text=No+Image" alt="{{offer.item.name}}">
+                                {% endif %}
+                                <div class="media-body">
+                                    <div class="item-title">
+                                        <p>{{offer.item.name}} | <strong>{{offer.item.asking}} BITS</strong>  x{{offer.item.amount}}</p>
+                                        {% if offer.true_state == "SUBMITTED" %}
+                                        <button class="btn btn-default cancel-btn" form="cancel_sale" name="offer" value="{{offer.uuid}}">
+                                            <img src="{% static 'dashboard/assets/img/market_cancel.png' %}" />
+                                        </button>
+                                        {% endif %}
+                                    </div>
+                                    <div class="line"></div>
+                                    <p class="description">{{offer.state}}, {{offer.updated_at|to_utc}}</p>
+                                    <p class="small text-danger">{{offer.failed_reason}}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<form action="../cancel/" id="cancel_sale" method="post">
+    {% csrf_token %}
+</form>
+{% endblock content %}
+

@@ -1,0 +1,130 @@
+{% extends "backend/bases/user.html" %}
+{% load dict_extras %}
+{% load local_date %}
+
+{% block content %}
+
+{% if has_inventory.status %}
+    {% if has_inventory.data %}
+<div class="row">
+    <div class="col-10 offset-1 offset-sm-0 col-md-8 col-lg-6">
+      {% if errors %}
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        {% for error in errors %}
+          {{error}}<br>
+        {% endfor %}
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      {% endif %}
+
+        <h4>Find a peer to start trading</h4>
+
+        <input type="text" class="form-control" onkeyup="query_search(this)" placeholder="Search username...">
+        <div class="list-group" id="search_results"></div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-10 offset-1 offset-sm-0 col-md-8 col-lg-6 mt-4">
+        <h4>Trading history</h4>
+
+      {% for offer in offers %}
+        <div class="row">
+            {% if offer.state %}
+            <div class="col-xs-12 clearfix">
+            {% endif %}
+                <div class="float-md-start">
+                    <span class="lead">{{states|pull:offer.state}}</span>
+                  {% if offer.player_a_id == me %}
+                    <p>Sent to <mark>{{offer.player_b_id}}</mark></p>
+                  {% else %}
+                    <p>Received from <mark>{{offer.player_a_id}}</mark></p>
+                  {% endif %}
+                    <p><small>{{offer.created_at|to_utc}}</small></p>
+                </div>
+
+                <a href="/user/trading/{{offer.uuid}}/" class="btn btn-primary float-md-end">View offer ></a>
+            </div>
+        </div>
+      {% empty %}
+        <div class="row">
+            <div class="alert alert-danger text-center">
+                Your trading history is still empty <br>
+                Find your friends and start trading with each other
+            </div>
+        </div>
+      {% endfor %}
+    </div>
+</div>
+
+
+{% csrf_token %}
+<script>
+  const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value
+
+  async function query_search(e) {
+    if (e.value) {
+      const response = await search_users(e.value, csrftoken)
+
+      if (!response.status) {
+        document.querySelector("#search_results").innerHTML = `<div class="alert alert-warning">${response.error}</div>`
+      }
+
+      if (response.data) {
+        document.querySelector("#search_results").innerHTML = response.data.map(x => {
+          return `<div class="list-group-item list-group-item-action">
+              <span class="align-middle">${x}</span>
+              <a href="#" class="btn btn-success btn-sm float-end" onclick="make_trading_offer(this)" data-name="${x}">Send trading request</a>
+            </div>`
+        }).join("")
+      }
+    } else {
+      document.querySelector("#search_results").innerHTML = ""
+    }
+  }
+
+  async function make_trading_offer(e) {
+    event.preventDefault()
+    const request = new Request('/user/trading/makeoffer/', {
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrftoken,
+        }
+    })
+
+    const data = await fetch(request, {
+      method: 'POST',
+      cache: 'no-cache',
+      mode: 'same-origin',
+      body: JSON.stringify({ nick_name: e.dataset.name }),
+    })
+
+    const response = await data.json()
+    if (response.status) {
+        location.replace(`/user/trading/${response.data}`)
+    } else {
+        alert(`${response.error}`)
+    }
+  }
+</script>
+    {% else %}
+<div class="row">
+    <div class="col-md-10">
+        <div class="alert alert-primary text-center">
+            You haven't logged in the game. You cannot start trading until you have an inventory wallet. <br>
+            Log into the game and play a little before proceeding.
+        </div>
+    </div>
+</div>
+    {% endif %}
+{% else %}
+<div class="row">
+    <div class="col-md-10">
+        <div class="alert alert-danger text-center">
+            {{has_inventory.error}}
+        </div>
+    </div>
+</div>
+{% endif %}
+
+{% endblock content %}

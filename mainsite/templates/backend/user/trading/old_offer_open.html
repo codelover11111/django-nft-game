@@ -1,0 +1,95 @@
+{% extends "backend/bases/user.html" %}
+{% load static %}
+{% load misc %}
+
+{% block content %}
+
+<div class="row">
+    <div class="col-10 offset-1 offset-sm-0 col-lg-6 col-md-11 mt-4">
+        <p class="lead">Items list</p>
+
+        <table class="table table-primary table-striped">
+            <colgroup> <col class="col-2"> <col class="col-1"> <col> <col class="col-4 col-md-3"> <col class="col-1"> </colgroup>
+            <tbody data-inventory_type="item">
+            {% for item in items %}
+                {% if item.amount %}
+                <tr data-id="{{item.id}}"
+                    data-can_recycle="{{item.can_recycle}}"
+                    data-type="item"
+                    data-name="{{item.name}}"
+                    data-amount="{{item.amount}}"
+                    data-details="{{item.details}}"
+                  {% if item.image %}
+                    data-image="{{pve}}{{item.image}}">
+                    <td data-mkt-role="image"><img class="img" width="50" src="{{pve}}{{item.image}}"></td>
+                  {% else %}
+                    data-image="https://via.placeholder.com/75?text=No+Image">
+                    <td data-mkt-role="image"><img class="img" width="50" src="https://via.placeholder.com/75?text=No+Image"></td>
+                  {% endif %}
+                    <td class="text-center align-middle" data-name="count">{{item.amount}}</td>
+                    <td class="align-middle"
+                        data-mkt-role="name"
+                  {% if item.details %}
+                        data-bs-toggle="popover"
+                        data-bs-trigger="hover"
+                        data-bs-html="true"
+                        data-bs-placement="top"
+                        title="Unique traits"
+                        data-bs-content="{{item.details}}"
+                  {% endif %}
+                    >{{item.name}} {% if item.details %} <small class="mark bg-warning text-black">info</small>{% endif %}
+                    <br><small class="text-success">{% if item.can_recycle %}Recyclable{% endif %}</small>
+                    </td>
+                    <td class="py-0 align-middle"><input class="form-control" type="number" value="0" max="{{item.amount}}" min="0" step="1"></td>
+                    <td class="py-0 align-middle"><button class="btn btn-sm btn-success" onclick="ts._add(this)">Add</button></td>
+                </tr>
+                {% endif %}
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="col-10 offset-1 offset-sm-0 col-lg-5 col-md-11 mt-4">
+        <p class="lead">Minerals list</p>
+
+        <table class="table table-primary table-striped">
+            <colgroup> <col class="col-2"> <col class="col-1"> <col> <col class="col-4 col-md-3"> <col class="col-1"> </colgroup>
+            <tbody data-inventory_type="mineral">
+            {% for mineral in minerals %}
+                {% if mineral.amount %}
+                <tr data-id="{{mineral.id}}"
+                    data-can_recycle="0"
+                    data-type="mineral"
+                    data-name="{{mineral.name}}"
+                    data-amount="{{mineral.amount}}"
+                    data-perks="{{mineral.pack_data}}"
+                  {% if mineral.image %}
+                    data-image="{{pve}}{{mineral.image}}">
+                    <td data-mkt-role="image"><img class="img" width="50" src="{{pve}}{{mineral.image}}">
+                  {% else %}
+                    data-image="https://via.placeholder.com/75?text=No+Image">
+                    <td data-mkt-role="image"><img class="img" width="50" src="https://via.placeholder.com/75?text=No+Image">
+                  {% endif %}
+                    </td>
+                    <td class="text-center align-middle" data-name="count">{{mineral.amount}}</td>
+                    <td class="align-middle" data-mkt-role="name">{{mineral.name}}</td>
+                    <td class="py-0 align-middle"><input class="form-control" type="number" value="0" max="{{mineral.amount}}" min="0" step="1" /></td>
+                    <td class="py-0 align-middle"><button class="btn btn-sm btn-success" onclick="ts._add(this)">Add</button></td>
+                </tr>
+                {% endif %}
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+<script src="{% static 'js/trading.js' %}"></script>
+<script>
+    var ts
+    document.addEventListener("DOMContentLoaded", () => {
+      ts = new TradingNotifier("wss://{{request.session.notif_url}}"+location.pathname, '{{me.nick_name}}', '{{they.nick_name}}')
+    });
+</script>
+
+{% endblock content %}

@@ -1,0 +1,80 @@
+.tfa-form-section {
+    flex-direction: column;
+    max-width: 600px;
+    margin: auto;
+    justify-content: center;
+    align-items: center;
+}
+
+.tfa-form-section .alert p {
+    margin-bottom: 0;
+}
+
+.tfa-form {
+    display: flex;
+    flex-direction: column;
+}
+
+.tfa-form #dialog {
+    display: flex;
+    gap: 10px;
+}
+
+.tfa-form #dialog input {
+    padding: 10px;
+    text-align: center;
+    font-size: 40px;
+}
+
+.tfa-form .btn-group {
+    margin-top: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.tfa-qr {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.tfa-qr img {
+    width: 250px;
+    height: 250px;
+}
+
+.tfa-qr p {
+    margin-top: 10px;
+    text-align: center;
+}
+
+.tfa-form .form-description {
+    margin-top: 10px;
+}
+
+.tfa-form .btn-group {
+    gap: 10px;
+}
+
+.verification-email-form button {
+    color: #007bff;
+    outline: none;
+    border: none;
+    background: transparent;
+    font-weight: 500;
+    cursor: pointer;
+    padding: 0;
+}
+
+.verification-email-form button:hover {
+    color: #0056b3;
+}
+
+@media screen and (max-width: 767px) {
+    .account-form.tfa-form .btn-group .btn + .btn {
+        margin-top: 0;
+        width: auto;
+    }
+}

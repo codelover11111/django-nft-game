@@ -1,0 +1,182 @@
+{% extends "backend/bases/layout.html" %}
+{% load static %}
+{% load misc %}
+{% load dict_extras %}
+
+{% block content %}
+<!-- Start app main Content -->
+<div class="main-content">
+    <div class="trading_list_outer"> 
+        <h2 class="section-title my-3">Trading</h2>
+        {% if offer.state == offer.RESERVED %}
+        {% if my_choice == offer.SUBMITTED %}
+        <div class="card card-confirm-trade p-3">
+            <div>
+                <p>¿Are you sure you want trade?</p>
+                <p>This action cannot be rolled back</p>
+            </div>
+            <div class="card-confirm-trade-btn-group">
+                <button class="dashboard-btn confirm-trade-accept" onclick="ts._update_offer(this)" data-choice="ACCEPTED"><span>Accept</span></button>
+                <button class="dashboard-btn confirm-trade-cancel" onclick="ts._update_offer(this)" data-choice="CANCELLED"><span>Cancel</span></button>
+            </div>
+        </div>
+        {% else %}
+        <div class="col-sm-12 alert alert-primary text-center" role="alert">{{offer.get_state_display}}. {{my_choice}}</div>
+        {% endif %}
+        {% elif offer.state == offer.COMPLETED %}
+        <div class="col-sm-12 alert alert-success text-center" role="alert">{{offer.get_state_display}}</div>
+        {% else %}
+        <div class="col-sm-12 alert alert-danger text-center" role="alert">{{offer.get_state_display}}. {{offer.failed_reason}}</div>
+        {% endif %}
+
+        <div class="row mt-5">
+            <div class="col-12 col-md-6 col-lg-6">
+                <div class="my-offer-title">
+                    <p>{{me.nick_name}}</p>
+                </div>
+                <div class="my-offer-content">
+                    <div class="bits">
+                        <span>{{my_bundle.bits|default:'0'}}</span>
+                        <span>BITS</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-6 col-lg-6 offer-section">
+                <div>
+                    <div class="my-offer-title">
+                        <p>{{they.nick_name}}</p>
+                    </div>
+                    <div>
+                        <span>{{their_bundle.bits|default:'0'}}</span>
+                        <span>BITS</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row trading_list_content">
+            <div class="col-12 col-md-6 col-lg-6">
+                {% for entry in my_bundle.item %}
+                <div class="card">
+                    <div class="medias">
+                        <img class="mr-3" src="{{entry.image}}" alt="{{entry.name}}" width="50">
+                        <div class="media-body">
+                        </div>
+                    </div>
+                    <div class="item_list_content">
+                        <div class="card-body-left">
+                            <div class="item-number">
+                                <div>
+                                    <p>{{entry.amount}}</p>
+                                </div>
+                            </div>
+                            <div class="item-detail">
+                                <div>
+                                    <p
+                                    {% if entry.details and entry.details != 'None' %}
+                                        data-bs-toggle="popover"
+                                        data-bs-trigger="hover"
+                                        data-bs-html="true"
+                                        data-bs-placement="top"
+                                        title="Unique traits"
+                                        data-bs-content="{{entry.details}}"
+                                    {% endif %}
+                                    >{{entry.name}}{% if entry.details and entry.details != 'None' %} <small class="mark bg-warning text-black">info</small>{% endif %}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+
+                {% for entry in my_bundle.mineral %}
+                <div class="card">
+                    <div class="medias">
+                        <img class="mr-3" src="{{entry.image}}" alt="{{entry.name}}" width="50">
+                        <div class="media-body">
+                        </div>
+                    </div>
+                    <div class="item_list_content">
+                        <div class="card-body-left">
+                            <div class="item-number">
+                                <div>
+                                    <p>{{entry.amount}}</p>
+                                </div>
+                            </div>
+                            <div class="item-detail">
+                                <div>
+                                    <p>{{entry.name}}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+
+            <div class="col-12 col-md-6 col-lg-6">
+                {% for entry in their_bundle.item %}
+                <div class="card">
+                    <div class="medias">
+                        <img class="mr-3" src="{{entry.image}}" alt="{{entry.name}}">
+                        <div class="media-body">
+                        </div>
+                    </div>
+                    <div class="minerals_ist_content item_list_content">
+                        <div class="card-body-left">
+                            <div class="item-number">
+                                <div>
+                                    <p>{{entry.amount}}</p>
+                                </div>
+                            </div>
+                            <div class="item-detail">
+                                <div>
+                                    <p
+                                    {% if entry.details and entry.details != 'None' %}
+                                        data-bs-toggle="popover"
+                                        data-bs-trigger="hover"
+                                        data-bs-html="true"
+                                        data-bs-placement="top"
+                                        title="Unique traits"
+                                        data-bs-content="{{entry.details}}"
+                                    {% endif %}
+                                    >{{entry.name}}{% if entry.details and entry.details != 'None' %} <small class="mark bg-warning text-black">info</small>{% endif %}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+                {% for entry in their_bundle.mineral %}
+                <div class="card">
+                    <div class="medias">
+                        <img class="mr-3" src="{{entry.image}}" alt="{{entry.name}}">
+                        <div class="media-body">
+                        </div>
+                    </div>
+                    <div class="minerals_ist_content item_list_content">
+                        <div class="card-body-left">
+                            <div class="item-number">
+                                <div>
+                                    <p>{{entry.amount}}</p>
+                                </div>
+                            </div>
+                            <div class="item-detail">
+                                <div>
+                                    <p>{{entry.name}}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="{% static 'js/tradingclose.js' %}"></script>
+<script>
+    const ts = new TradingNotifier("wss://{{request.session.notif_url}}"+location.pathname.replace('closed/',''), '{{me.nick_name}}', '{{they.nick_name}}')
+</script>
+{% endblock content %}

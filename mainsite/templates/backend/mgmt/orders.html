@@ -1,0 +1,204 @@
+{% extends 'backend/bases/mgmt.html' %}
+{% load mathfilters %}
+
+{% block content %}
+<div class="row justify-content-center" style="padding: 10px;">
+  <div>
+    <h2>Order Management</h2>
+  </div>
+
+  <table class="table table-bordered table-hover">
+    <thead>
+      <tr class="info">
+        <th scope="col">Customer Name</th>
+        <th scope="col">Customer Email</th>
+        <th scope="col">Enjin Address</th>
+        <th class="text-right" scope="col">Amount</th>
+        <th class="text-center" scope="col">Payment Type</th>
+        <th class="text-center" scope="col">Payment Status</th>
+        <th class="text-center" scope="col">Delivery Status</th>
+        <th class="text-center" scope="col">Paid Date</th>
+        <th class="text-center" scope="col"></th>
+      </tr>
+    </thead>
+
+    <tbody>
+    {% for order in orders %}
+      <tr>
+        <th scope="row" style="width: 200px;">{{ order.cart.customer.nick_name }}</th>
+        <td style="width: 200px;">{{ order.cart.customer.email }}</td>
+        <td style="width: 200px;">{{ order.enjin_address }}</td>
+        <td class="text-right">$ {{ order.amount|div:100 }}</td>
+        <td class="text-center">
+          {% if order.payment_type == 0 %}
+            <span class="label label-info">Stripe</span>
+          {% else %}
+            <span class="label label-success">Crypto</span>
+          {% endif %}
+        </td>
+        <td class="text-center">
+          {% if order.has_paid == 1 %}
+            <span class="label label-success">Paid</span>
+          {% else %}
+            <span class="label label-warning">UnPaid</span>
+          {% endif %}
+        </td>
+        <td class="text-center">
+          {% if order.has_delivered == 1 %}
+            <span class="label label-success">Delivered</span>
+          {% else %}
+            <span class="label label-warning">Draft</span>
+          {% endif %}
+        </td>
+        <th scope="row" style="width: 200px;">{{ order.created_at|date:"Y-m-d H:i:s" }}</th>
+        <td class="text-center" style="width: 15%;">
+          <div style="display: flex; flex-direction:column;">
+            <button class="btn btn-primary confirm-payment-btn btn-sm" data-id="{{order.id}}"><i class="fa fa-fw fa-check"></i> Confirm payment</button>
+            <button class="btn btn-success delivery-btn btn-sm" data-id="{{order.id}}"><i class="fa fa-fw fa-truck"></i> Delivery</button>
+            <button class="btn btn-info detail-btn btn-sm" data-id="{{order.cart_id}}"><i class="fa fa-fw fa-info"></i> Detail</button>
+            <a href="/mgmt/orders/delete/{{ order.id }}/" class="btn btn-danger btn-sm"><i class="fa fa-fw fa-trash"></i> Delete</a>
+            {% if order.payment_type == 1 %}
+              {% if order.transaction == None %}
+                <a target="_blank" class="btn btn-primary btn-sm" href="https://etherscan.io/tx/{{ order.payment_intent }}"><i class="fa fa-fw fa-search"></i> Etherscan</a>
+              {% else %}
+                <a target="_blank" class="btn btn-primary btn-sm" href="https://etherscan.io/tx/{{ order.transaction }}"><i class="fa fa-fw fa-search"></i> Etherscan</a>
+              {% endif %}
+            {% endif %}
+          </div>
+        </td>
+      </tr>
+    {% endfor  %}
+    </tbody>
+  </table>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="orderDetailModal" role="dialog">
+  <div class="modal-dialog modal-lg">
+  
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Order Detail</h4>
+      </div>
+      <div class="modal-body">
+        <div class="table-responsive">          
+          <table class="table">
+            <thead>
+              <tr>
+                <td>Product name</td>
+                <td>Quantity</td>
+                <td>Price</td>
+                <td>Amount</td>
+                <td>Date</td>
+              </tr>
+            </thead>
+            <tbody>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+    
+  </div>
+</div>
+
+<script>
+  $(document).ready(function(){
+    $(".confirm-payment-btn").click(function() {
+      var order_id = $(this).data('id');
+      var payment_status = $(this).parent().parent().prev().prev().prev();
+      if (confirm('Are you sure you want to confirm the payment for this order?')) {
+        fetch("/api/orders/confirmpayment/", {
+          method: 'POST',
+          headers: {
+            "Content-Type": "application/json",
+            'X-CSRFToken': $('input[name="csrfmiddlewaretoken"]').val()
+          },
+          body: JSON.stringify(
+            { order_id: order_id }
+          )
+        })
+          .then(function (response) {
+            return response.json();
+          })
+          .then(function (result) {
+            if(result.status) {
+              $(payment_status).html('<span class="label label-success">Paid</span>');
+            }
+          })
+          .catch(function (error) {
+              console.error('Error:', error);
+          });
+      }
+    });
+
+    $(".delivery-btn").click(function() {
+      var order_id = $(this).data('id');
+      var delivery_status = $(this).parent().parent().prev().prev();
+      if (confirm('Are you sure you want to deliver this thing to the customer?')) {
+        fetch("/api/orders/delivery/", {
+          method: 'POST',
+          headers: {
+            "Content-Type": "application/json",
+            'X-CSRFToken': $('input[name="csrfmiddlewaretoken"]').val()
+          },
+          body: JSON.stringify(
+            { order_id: order_id }
+          )
+        })
+          .then(function (response) {
+            return response.json();
+          })
+          .then(function (result) {
+            if(result.status) {
+              $(delivery_status).html('<span class="label label-success">Delivered</span>');
+            }
+          })
+          .catch(function (error) {
+              console.error('Error:', error);
+          });
+      }
+    });
+
+    $(".detail-btn").click(function() {
+      $("#orderDetailModal table tbody").html("");
+      var cartId = $(this).data('id');
+      $.ajax({
+        url: '/api/cartitems/get/',
+        method: 'GET',
+        headers: {
+            "Content-Type": "application/json",
+            'X-CSRFToken': $('input[name="csrfmiddlewaretoken"]').val()
+        },
+        data: { type: "getByCartId", cart_id: cartId },
+        success: function (data) {
+            if(data.myCart.length == 0) return;
+
+            for(var i = 0; i < data.myCart.length; i++) {
+              var str = `
+                <tr>
+                  <td style="vertical-align: middle;">
+                      <div style="display: flex;align-items: center;">
+                          <img src="/media/${data.myCart[i].image}" style="width:50px;margin-right:5px;">
+                          <span>${data.myCart[i].title}</span>
+                      </div>
+                  </td>
+                  <td>${data.myCart[i].quantity}</td>
+                  <td>$ ${data.myCart[i].price}</td>
+                  <td>$ ${data.myCart[i].price * data.myCart[i].quantity}</td>
+                  <td>${data.myCart[i].created_at.split("T")[0] + " " + data.myCart[i].created_at.split("T")[1].split(".")[0]}</td>
+              </tr>`;
+              $("#orderDetailModal table tbody").append(str);
+          }
+        }
+    });
+      $("#orderDetailModal").modal()
+    });
+  });
+</script>
+{% endblock content %}

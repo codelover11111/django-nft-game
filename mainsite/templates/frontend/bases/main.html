@@ -1,0 +1,298 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Misfits</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="{% static 'homepage/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'homepage/css/video-js.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-nice-select/1.1.0/css/nice-select.min.css" integrity="sha512-CruCP+TD3yXzlvvijET8wV5WxxEh5H8P4cmz0RFbKK6FlZ2sYl3AEsKlLPHbniXKSrDdFewhbmBK5skbdsASbQ==" crossorigin="anonymous" />
+	<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="{% static 'public/style/fonts.css' %}">
+    <link rel="stylesheet" href="{% static 'homepage/css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'homepage/css/tfa.css' %}">
+    {% if active_menu == "shop" %}
+    <link rel="stylesheet" href="{% static 'public/style/style.css' %}">
+    {% endif %}
+    <script src="{% static 'public/js/jquery-3.2.1.min.js' %}"></script>
+    <link rel="shortcut icon" type="image/png" href="{% static 'public/assets/favicon.ico' %}"/>
+</head>
+
+{% if active_menu == "home" %}
+<body class="index-templet">
+{% else %}
+<body class="">
+{% endif %}
+    <div class="site-content">
+        <header class="header_section">
+			<div class="site_header">
+				<nav class="navbar navbar-expand-lg navbar-light nav-bg">
+					<div class="container-fluid">
+						<div class="row">
+							<div class="col-md-3 col-5">
+								<a class="navbar-brand" href="/">
+									<img class="desktop_view" src="{% static 'homepage/images/logo1.png' %}"  alt="Space Misfits logo">
+									<img class="mobile_view" src="{% static 'homepage/images/logo_icon.png' %}"  alt="Space Misfits logo">
+								</a>
+							</div>
+							<div class="col-md-9 col-7 mobile-header">
+								<div class="navbar_toggler">
+									<span class="toggler-icon"></span>
+									<span class="toggler-icon"></span>
+									<span class="toggler-icon"></span>
+								</div>
+								<div class="main_nav">
+									<ul class="navbar-nav ml-auto">
+                                        {% if active_menu == "home" %}
+										<li class="nav-item"><a class="nav-link" href="/"><mark>Home</mark></a></li>
+                                        {% else %}
+                                        <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+                                        {% endif %}
+
+                                        {% if active_menu == "news" %}
+										<li class="nav-item"><a class="nav-link" href="/news/"><mark>News</mark></a></li>
+                                        {% else %}
+                                        <li class="nav-item"><a class="nav-link" href="/news/">News</a></li>
+                                        {% endif %}
+
+                                        {% if active_menu == "tutorial" %}
+										<li class="nav-item"><a class="nav-link" href="/tutorial/"><mark>Tutorial</mark></a></li>
+                                        {% else %}
+                                        <li class="nav-item"><a class="nav-link" href="/tutorial/">Tutorial</a></li>
+                                        {% endif %}
+
+                                        {% if active_menu == "shop" %}
+										<li class="nav-item"><a class="nav-link" href="/shop/"><mark>Shop</mark></a></li>
+                                        {% else %}
+                                        <li class="nav-item"><a class="nav-link" href="/shop/">Shop</a></li>
+                                        {% endif %}
+
+                                        {% if active_menu == "download" %}
+										<li class="nav-item"><a class="nav-link" href="/download/"><mark>Download</mark></a></li>
+                                        {% else %}
+                                        <li class="nav-item"><a class="nav-link" href="/download/">Download</a></li>
+                                        {% endif %}
+									</ul>
+
+									<div class="header-links">
+                                        <a href="/shop/" class="btn"><span>Shop Now!</span></a>
+                                        {% if request.session.name %}
+                                            {% if request.session.is_admin %}
+                                            <a href="/mgmt/" class="text-white ms-5">
+                                                <span><img src="{% static 'homepage/images/user.png' %}">[Admin] {{ request.session.name }}</span>
+                                            </a>
+                                            {% else %}
+                                            <a href="/user/" class="text-white ms-5">
+                                                <span><img src="{% static 'homepage/images/user.png' %}">{{ request.session.name }}</span>
+                                            </a>
+                                            {% endif %}
+                                        {% else %}
+                                            <a href="/signin/" class="text-white ms-5">
+                                                <span><img src="{% static 'homepage/images/user.png' %}">My account</span>
+                                            </a>
+                                        {% endif %}
+									</div>
+								</div>
+							</div>
+						</div>
+                    </div>
+				</nav>
+			</div>
+		</header>
+
+        {% block content %}{% endblock content %}
+
+        <footer class="mt-5">
+			<div class="container-fluid">
+				<div class="row">
+					<div class="col-md-12">
+						<div class="footer-content foot-border text-center py-4">
+							<img src="{% static 'homepage/images/hero_logo-1.png' %}" alt="Space Misfits">
+						</div>
+					</div>
+					<div class="col-md-12">
+						<div class="footer-content text-center py-5">
+							<p class="text-white" id="allright-reserved"></p>
+						</div>
+					</div>
+                    {% csrf_token %}
+				</div>
+			</div>
+
+		</footer>
+    </div>
+
+    <!-- <script src="{% static 'homepage/js/jquery-3.2.1.slim.min.js' %}"></script> -->
+    <script src="{% static 'homepage/js/popper.min.js' %}"></script>
+    <script src="{% static 'homepage/js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'public/js/detectmobilebrowser.js' %}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-nice-select/1.1.0/js/jquery.nice-select.min.js" integrity="sha512-NqYds8su6jivy1/WLoW8x1tZMRD7/1ZfhWG/jcRQLOzV1k1rIODCpMgoBnar5QXshKJGV7vi0LXLNXPoFsM5Zg==" crossorigin="anonymous"></script>
+    <script src="{% static 'homepage/js/video.min.js' %}"></script>
+    <script src="{% static 'public/js/main.js' %}"></script>
+    <script src="{% static 'homepage/js/custom.js' %}"></script>
+
+    {% if request.session.name %}
+        <script>
+            $.ajaxSetup({
+                headers:
+                { 'X-CSRFToken': $('input[name="csrfmiddlewaretoken"]').val() }
+            });
+
+            $.ajax({
+                url: '/api/cartitems/get/',
+                method: 'GET',
+                headers: {
+                    "Content-Type": "application/json",
+                    'X-CSRFToken': $('input[name="csrfmiddlewaretoken"]').val()
+                },
+                data: { type: "getByUsername", user_id: '{{ request.session.name }}' },
+                success: function (data) {
+                    if(data.myCart.length == 0) {
+                        $("#cart-badge").hide();
+                        return;
+                    }
+                    var item_count = 0;
+                    for(var i = 0; i < data.myCart.length; i++) {
+                        var str = `
+                        <div class="cart-item-row" data-product-id="${data.myCart[i].product_id}">
+                            <div>
+                                <img src="/media/${data.myCart[i].image}">
+                                <span>${data.myCart[i].title}</span>
+                            </div>
+                            <div>
+                                <span>$</span>
+                                <span class="cart-item-product-price">${data.myCart[i].price}</span>
+                                <span class="cart-item-product-cross">x</span>
+                                <span class="cart-item-product-quantity">${data.myCart[i].quantity}</span>
+                            </div>
+                        </div>`;
+                        item_count += data.myCart[i].quantity;
+                        $(".cart-body").append(str);
+                    }
+                    $("#cart-badge").text(item_count);
+                }
+            });
+
+            // My cart
+            
+            $("#my-cart-title").click(function() {
+                $(".mycart-tooltip").slideDown();
+            });
+
+            $(".mycart-tooltip .tooltip-close").click(function() {
+                $(".mycart-tooltip").slideUp();
+            });
+            
+
+        </script>
+    {% endif %}
+    <script>
+        // work in progress - needs some refactoring and will drop JQuery i promise :)
+        var instance = $(".hs__wrapper");
+        $.each( instance, function(key, value) {
+            
+        var arrows = $(instance[key]).find(".arrow"),
+            prevArrow = arrows.filter('.arrow-prev'),
+            nextArrow = arrows.filter('.arrow-next'),
+            box = $(instance[key]).find(".hs"), 
+            x = 0,
+            mx = 0,
+            maxScrollWidth = box[0].scrollWidth - (box[0].clientWidth / 2) - (box.width() / 2);
+
+        $(arrows).on('click', function() {
+            if ($(this).hasClass("arrow-next")) {
+            x = ((box.width() / 2)) + box.scrollLeft() - 10;
+            box.animate({
+                scrollLeft: x,
+            })
+            } else {
+            x = ((box.width() / 2)) - box.scrollLeft() -10;
+            box.animate({
+                scrollLeft: -x,
+            })
+            }
+            
+        });
+            
+        $(box).on({
+            mousemove: function(e) {
+            var mx2 = e.pageX - this.offsetLeft;
+            if(mx) this.scrollLeft = this.sx + mx - mx2;
+            },
+            mousedown: function(e) {
+            this.sx = this.scrollLeft;
+            mx = e.pageX - this.offsetLeft;
+            },
+            scroll: function() {
+            toggleArrows();
+            }
+        });
+
+        $(document).on("mouseup", function(){
+            mx = 0;
+        });
+        
+        function toggleArrows() {
+            if(box.scrollLeft() > maxScrollWidth - 10) {
+                // disable next button when right end has reached 
+                nextArrow.addClass('disabled');
+            } else if(box.scrollLeft() < 10) {
+                // disable prev button when left end has reached 
+                prevArrow.addClass('disabled')
+            } else{
+                // both are enabled
+                nextArrow.removeClass('disabled');
+                prevArrow.removeClass('disabled');
+            }
+        }
+        
+        });
+
+        $(function() {
+            'use strict';
+
+            let body = $('body');
+
+            function goToNextInput(e) {
+                let key = e.which,
+                t = $(e.target),
+                sib = t.next('input');
+
+                if (key !== 9 && (key < 48 || key > 57)) {
+                    e.preventDefault();
+                    return false;
+                }
+
+                if (key === 9) {
+                    return true;
+                }
+
+                if (!sib || !sib.length) {
+                    sib = body.find('input').eq(0);
+                }
+                sib.select().focus();
+            }
+
+            function onKeyDown(e) {
+                let key = e.which;
+                if (key === 9 || (key >= 48 && key <= 57)) {
+                    return true;
+                }
+                e.preventDefault();
+                return false;
+            }
+
+            function onFocus(e) {
+                $(e.target).select();
+            }
+
+            body.on('keyup', '.tfa-input', goToNextInput);
+            body.on('keydown', '.tfa-input', onKeyDown);
+            body.on('click', '.tfa-input', onFocus);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,98 @@
+{% extends "backend/bases/layout.html" %}
+{% load static %}
+{% block content %}
+    <link rel="stylesheet" href="{% static 'css/custom.css' %}"/>
+
+    <div class="main-content">
+        <div class="row setting_outer">
+            <div class="col-md-12 mt-5">
+                <h3 class="v680 mb_10">Connect</h3>
+            </div>
+                <div class="col-md-6"><h3 class="font_20 mb_10" style="font-size: 18px">Install Metamask, Connect your wallet here</h3></div>
+                <div class="col-md-6"><button id="metamask_btn" class="dashboard-btn-2 mt-2"></button></div>
+
+            <div class="col-md-12 mt-5">
+                <h3 class="v680 mb_10">Your Balance</h3>
+            </div>
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-body">
+                        <span class="d-block">
+                            <span id="harmony_smcw_balance" style="display: block"><span class="v681">{{ offchain_hrc_balance }}</span><span class="v682"> SMCW</span></span>
+                            <span id="bsc_smcw_balance" style="display: block"><span class="v681">{{ offchain_bsc_balance }}</span><span class="v682"> SMCW</span></span>
+                            <span id="eth_smcw_balance" style="display: block"><span class="v681">{{ offchain_erc_balance }}</span><span class="v682"> SMCW</span></span>
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                    <!--<label for="product-category" class="form-label">Category</label>-->
+                    <div class="custom-select" style="float: right">
+                      <select id="network_list">
+                        {% for item in networks %}
+                            <option value="{{ item.value }}">{{ item.name }}</option>
+                        {% endfor %}
+                      </select>
+                    </div>
+            </div>
+            <div class="col-md-12 mt-5">
+                <div class="switch">
+                    <button id="deposit_mode" class="dashboard-btn-switch mt-2 switch_btn active" form="" onclick="enable_deposit()">
+                        <span>Deposit</span>
+                    </button>
+                    <button id="withdraw_mode" class="dashboard-btn-switch mt-2 switch_btn" form="" onclick="enable_withdraw()">
+                        <span>Withdraw</span>
+                    </button>
+                </div>
+            </div>
+            <div class="col-md-12 mt-5" id="deposit_section">
+                <h3 class="v680 mb_10">Deposit your SMCW token</h3>
+                <h3 class="font_20 mb_10" style="font-size: 18px">Deposit amount</h3>
+                <div class="card">
+                    <div class="card-body">
+                        <div class="form-group mb-2 num-in">
+                            <input placeholder="0.0" type="text" class="form-control" id="deposit_amount" min="0">
+                        </div>
+
+                        <button class="dashboard-btn-2 mt-2" form="" onclick="onclick_deposit()">
+                            <span>Deposit</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-12 mt-5" id="withdraw_section" style="display: none">
+                <h3 class="v680 mb_10">Get your SMCW token</h3>
+                <h3 class="font_20 mb_10" style="font-size: 18px">Withdraw amount</h3>
+                <div class="card">
+                    <div class="card-body">
+                        <div class="form-group mb-2 num-in">
+                            <input placeholder="0.0" type="text" class="form-control" id="withdraw_amount" min="0">
+                        </div>
+
+                        <button class="dashboard-btn-2 mt-2" form="" onclick="onclick_withdraw_crown()">
+                            <span>Withdraw</span>
+                        </button>
+                        <span class="d-block cr-dp">
+                            <span style="display: block">Reminder</span>
+                            <ul><li><span style="display: block;font-size: 12px;">Withdraw Tax {{ withdraw_tax }} %</span></li></ul>
+
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<script src="{% static 'public/js/@metamask/onboarding/dist/metamask-onboarding.bundle.js' %}"></script>
+<script src="{% static 'js/crown.js' %}"></script>
+<script src="{% static 'js/customselect.js' %}"></script>
+<script>
+    $(document).ready(function() {
+       onselect_network();
+        $(".select-selected").on('DOMSubtreeModified', function() {
+           onselect_network();
+       });
+    });
+</script>
+{% endblock %}

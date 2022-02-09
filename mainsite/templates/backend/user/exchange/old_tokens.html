@@ -1,0 +1,36 @@
+{% extends "backend/bases/user.html" %}
+
+{% block content %}
+  <div class="row px-4">
+    <div class="col-10">
+    {% if error_message %}
+      <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <strong>Something happened!</strong> {{error_message}}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+    {% endif %}
+    </div>
+
+{% if has_wallet %}
+  {% for token in tokens %}
+    <div class="col col-sm-6 col-md-4 p-3">
+    {% if token.nonFungible %}
+      <h4 class="text-success">{{token.name}} [NFT]</h4>
+    {% else %}
+      <h4>{{token.name}} [FT] <strong>x{{token.balance}}</strong></h4>
+    {% endif %}
+      <small class="text-primary">id {{token.id}}</small>
+
+      <p><i>{{token.metadata.description|default:"No description"}}</i></p>
+      <img src="{{token.metadata.image|default:"https://placeholder.pics/svg/256"}}" alt="{{token.metadata.description}}" width="256" class="rounded img-thumbnail">
+    </div>
+  {% endfor %}
+{% else %}
+    <div class="col col-md-8">
+      <div class="alert alert-danger" role="alert">
+        <strong>Sorry!</strong> You need to have an Enjin wallet linked to be able to see your tokens here
+      </div>
+    </div>
+{% endif %}
+  </div>
+{% endblock content %}

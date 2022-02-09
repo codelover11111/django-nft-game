@@ -1,0 +1,69 @@
+{% extends "backend/bases/user.html" %}
+{% load static %}
+
+{% block content %}
+<div class="row">
+    <div class="col-10">
+        <span class="lead">You're about to buy</span>
+
+        <div class="col-12 col-sm-auto my-4">
+          {% if item.image %}
+            <img src="{{pve}}{{item.image}}" alt="{{item.name}}" width="125" class="img float-start ms-2">
+          {% else %}
+            <img src="https://via.placeholder.com/75?text=No+Image" alt="{{item.name}}" width="125" class="img float-start ms-2">
+          {% endif %}
+        </div>
+
+        <div class="col-12 col-sm-auto my-4">
+            <ul class="list-group">
+                <li class="list-group-item">{{item.name}} x{{item.amount}}</li>
+                <li class="list-group-item">&nbsp;</li>
+                <li class="list-group-item">Total: {{item.asking}} BITS</li>
+            </ul>
+        </div>
+
+        <form method="post" class="form" id="purchase">
+            {% csrf_token %}
+
+            <button class="btn btn-primary" data-status="DONE" onclick="submit_form(this)">Pay</button>
+            <button class="btn btn-danger" data-status="RELEASE" onclick="submit_form(this)">Cancel</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    const offerid = "{{offer.uuid}}"
+    document.forms.purchase.onsubmit = e => { e.preventDefault() }
+
+    function submit_form(e) {
+        event.preventDefault()
+        const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+        const request = new Request(
+            `/api/market/payment/`,
+            { headers: {
+                'X-CSRFToken': csrftoken,
+                'Content-Type': "application/json",
+            }}
+        );
+
+        fetch(request, {
+            method: 'POST',
+            mode: 'same-origin',
+            body: JSON.stringify({
+                offer: offerid,
+                status: e.dataset.status,
+                info: "this is just a simple response"
+            }),
+        }).then(function (response) {
+            return response.json()
+        }).then(function (data) {
+            console.log(data)
+            const url = (data.status == 1 && data.data === "COMPLETED") ? "/user/market/history/" : "/user/market/"
+
+            if (location.assign) { location.assign(url) }
+            else { location.href = url }
+        });
+    }
+</script>
+{% endblock content %}

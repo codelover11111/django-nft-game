@@ -1,0 +1,111 @@
+{% extends "backend/bases/layout.html" %}
+
+{% block content %}
+
+<!-- Start app main Content -->
+<div class="main-content">
+  <div class="exchange_item_outer"> 
+    <h2 class="section-title my-3">Exchange </h2>
+    <div class="card alert-warning-box p-3">
+      <h5 class="mt-2">Attention!</h5>
+      <p>There is a issue with telemetry exchange. Stacks of telemetry are exchanged for the same type of telemetry.
+        <b>If you want unique telemetry please exchange one at a time</b>. This bug will be fixed very soon!</p>
+    </div>
+    {% if error_message %}
+      <div class="alert alert-danger alert-dismissible fade show mt-3" role="alert">
+        <strong>Something happened!</strong> {{error_message}}
+      </div>
+    {% endif %}
+    {% if success_message %}
+      <div class="alert alert-success alert-dismissible fade show mt-3" role="alert">
+        <strong>Great!</strong> {{success_message}}
+      </div>
+    {% endif %}
+
+    {% if has_wallet == 1 and item %}
+    <div class="row my-4">
+      <div class="col-md-7 mt-3">
+        <div class="card card-form2">
+          <div class="card-header d-block">
+            <h5 class="mt-3">{{item.item.name}}</h5>
+            <p>Items available: {{item.amount|floatformat:"0"}}</p>
+          </div>
+          <div class="card-body card-body-left">
+            <form method="post">
+              {% csrf_token %}
+              <p class="section-title mt-0">Tokens to receive</p>
+              <div class="form-group">
+                <input type="number" class="form-control" name="tokens_quantity" onchange="updateItemsAmount(this)" id="tokens_quantity" min="0" max="100" value="0">
+              </div>
+              <p class="section-title">Items cost</p>
+              <div class="form-group">
+                <input type="number" class="form-control" id="items_quantity" value="0" disabled>
+              </div>
+              <button name="submit" class="dashboard-btn mt-2"><span>Exchange items</span></a>
+            </form>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-5 mt-3">
+        <div class="card card-2 h-100">
+          <div class="card-header d-block">
+            <h5 class="mt-0">Exchange for Developer Key</h5>
+            <p class="mb-0">This token is an NFT</p>
+          </div>
+          <div class="medias">
+            <img class="mr-3 w-100" src="assets/img/tokens/blank.svg" alt="Generic placeholder image">
+            <div class="media-body">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col col-md-8">
+      {% if item.item.tokens_metadata.keep_surprise %}
+        <h4>Surprise Token</h4>
+        <p>You will receive a random token on exchange</p>
+      {% else %}
+        <h4>Exchange for {{token.name}}</h4>
+        {% if token.nonFungible %}
+        <p>This token is an NFT</p>
+        {% endif %}
+
+        {% if token.metadata %}
+        <p><i>{{token.metadata.description}}</i></p>
+        <img src="{{token.metadata.image|default:"https://placeholder.pics/svg/256"}}" alt="{{token.metadata.description}}" width="256" class="rounded img-thumbnail">
+        {% endif %}
+      {% endif %}
+    </div>
+
+    {% elif has_wallet == 0 %}
+    <div class="row">
+      <div class="col col-md-8">
+        <div class="alert alert-danger" role="alert">
+          <strong>Sorry!</strong> You need to have an Enjin wallet linked to be able to exchange your items
+        </div>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+</div>
+
+{% if has_wallet == 1 and item %}
+  <script>
+    const xrate = {{item.item.tokens_metadata.items_per_token}}
+    const the_form = document.forms[0]
+
+    function updateItemsAmount(e) {
+      document.querySelector("#items_quantity").value = parseInt(parseFloat(e.value)*xrate)
+      the_form.elements.submit.disabled = document.querySelector("#items_quantity").value > {{item.amount|floatformat:"0"}}
+    }
+
+    the_form.onsubmit = () => {
+      the_form.elements.submit.disabled = true
+      let status = confirm("Are you sure you want to exchange the items?")
+      the_form.elements.submit.disabled = status
+      return status
+    }
+  </script>
+{% endif %}
+{% endblock content %}

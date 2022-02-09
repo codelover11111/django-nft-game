@@ -1,0 +1,24 @@
+{% extends "frontend/bases/main.html" %}
+{% load static %}
+
+{% block content %}
+<section class="account" style="background-image: url('{% static '/public/assets/bg-9.jpg' %}');">
+    <div class="account-wrap">
+        <h1>sign up</h1>
+        {% if error_message %}
+        <div class="alert alert-warning">{{ error_message }}</div>
+        {% endif %}
+        <form method="post" class="account-form" id="sign-up">
+            {% csrf_token %}
+            <p><input type="text" name="user" placeholder="Username" minlength="8" pattern="^[a-zA-Z0-9_]+$" required /></p>
+            <p><input type="email" name="email" placeholder="Email address" required /></p>
+            <p><input type="password" name="pass" placeholder="Password" minlength="8" required /></p>
+            <p><input type="password" name="confirm_pass" placeholder="Confirm password" minlength="8" required /></p>
+            <div class="btn-group">
+                <button type="submit" class="btn btn-color"><span>Create an account</span></button>
+                <a href="/signin/" class="btn"><span>Sign In</span></a>
+            </div>
+        </form>
+    </div>
+</section>
+{% endblock content %}

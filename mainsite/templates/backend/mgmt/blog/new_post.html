@@ -1,0 +1,50 @@
+{% extends 'backend/bases/mgmt.html' %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-6">
+    {% if error %}
+    <div class="alert alert-danger">
+      <p>{{ error }}</p>
+    </div>
+    {% endif %}
+
+    <h2>Add new Blog Post</h2>
+
+    <form method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+
+      <div class="form-group">
+        <label for="post-title">Title</label>
+        <input id="post-title" type="text" class="form-control" name="title" required="true">
+      </div>
+
+      <div class="form-group">
+        <label for="post-preview">Preview Image</label>
+        <input type="file" name="preview" id="post-preview" class="form-control-file" required />
+      </div>
+
+      <div class="form-group">
+        <label for="post-cover">Cover Image</label>
+        <input type="file" name="cover" id="post-cover" class="form-control-file" required />
+      </div>
+
+      <div class="form-group">
+        <label for="post-text">Post content</label>
+        <textarea name="content" id="post-text" rows="20" class="form-control"></textarea>
+      </div>
+
+
+      <div class="form-group">
+        <label for="post-slug">Custom slug (optional)</label>
+        <input type="text"  name="slug" id="post-slug" class="form-control" pattern="[a-zA-Z0-9-]+">
+      </div>
+
+
+      <hr>
+
+      <button class="btn btn-success">Create post</button>
+    </form>
+  </div>
+</div>
+{% endblock content %}

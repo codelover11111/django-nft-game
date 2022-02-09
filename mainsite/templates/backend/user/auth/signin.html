@@ -1,0 +1,44 @@
+{% extends "frontend/bases/main.html" %}
+{% load static %}
+
+{% block content %}
+<div class="main-content">
+    <div class="news_section">
+        <div class="container">
+            <div class="sec_title">
+                <h1><span>SIGN IN</h1>
+            </div>
+
+            <div class="row">
+                <div class="account-form-section">
+                    <form method="post" class="account-form" id="sign-in">
+                        {% csrf_token %}
+                        {% if error_message %}
+                        <div class="alert alert-warning">{{ error_message }}</div>
+                        {% endif %}
+                        {% if user_fail_warn %}
+                        <div class="alert alert-warning">
+                            <p>Be careful! Too many failed sign in attempts will be penalized with a ban.</p>
+                            <p>If you're having problems logging in <a href="/recovery/">try resetting your password</a></p>
+                        </div>
+                        {% endif %}
+                        {% if user_hopping_warn %}
+                        <div class="alert alert-warning">
+                            <p>Be careful! Trying too many different users that are not yours is penalized with a ban.</p>
+                            <p>If you have an email address set up, <a href="/recovery/">try resetting your password</a></p>
+                        </div>
+                        {% endif %}
+                        <p><input type="text" name="user" placeholder="Username" required /></p>
+                        <p><input type="password" name="pass" placeholder="Password" /></p>
+                        <div class="btn-group">
+                            <a href="/signup/" class="btn"><span>Create an account</span></a>
+                            <button type="submit" class="btn btn-color"><span>Sign In</span></button>
+                        </div>
+                        <p class="form-description">Or maybe <a href="/recovery/">Forgot your password?</a></p>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

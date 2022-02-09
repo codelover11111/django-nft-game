@@ -1,0 +1,47 @@
+{% extends "backend/bases/mgmt.html" %}
+{% load local_date %}
+
+{% block content %}
+
+<div class="row justify-content-center">
+    {% if error_message %}
+    <div class="alert alert-warning">{{ error_message }}</div>
+    {% endif %}
+
+    <div>
+        <h2>{{ campaign.name }}</h2>
+        <p class="lead">{{ campaign.description }}</p>
+        {% if campaign.status == 'GOING' %}
+        <b class="text-success">Active</b>
+        {% else %}
+        <b class="text-mute">Finished</b>
+        {% endif %}
+
+        <p><b>Start date</b> {{ campaign.start|to_est }}</p>
+        {% if campaign.end %}<p><b>Ending date</b> {{ campaign.end|to_est }}</p>{% endif %}
+    </div>
+
+    <table class="table table-bordered table-hover">
+        <thead>
+            <tr>
+                <th scope="col">Position</th>
+                <th scope="col">Nickname</th>
+                <th scope="col">Score</th>
+                <th scope="col">ETH address</th>
+                <th scope="col">Email</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for player in campaign.leaderboard %}
+            <tr>
+                <th scope="row">{{ player.position }}</th>
+                <td>{{ player.nick }}</td>
+                <td>{{ player.score }}</td>
+                <td>{{ player.wallet }}</td>
+                <td>{{ player.email }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock content %}

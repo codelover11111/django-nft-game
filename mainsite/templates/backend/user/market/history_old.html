@@ -1,0 +1,76 @@
+{% extends "backend/bases/user.html" %}
+{% load local_date %}
+
+{% block content %}
+<div class="row">
+    <div class="col-sm-5">
+        <h3>My purchase history</h3>
+        <ul class="list-group">
+        {% for offer in purchased %}
+           {% if offer.item.details and offer.item.details != "None" %}
+           <li class="list-group-item"
+               data-bs-toggle="popover"
+               data-bs-trigger="hover"
+               data-bs-html="true"
+               data-bs-placement="top"
+               title="Unique traits"
+               data-bs-content="{{offer.item.details}}">
+           {% else %}
+           <li class="list-group-item">
+           {% endif %}
+               <div>
+                {% if offer.item.image %}
+                    <img src="{{offer.item.image}}" alt="{{offer.item.name}}" width="50" class="img float-start me-2">
+                {% else %}
+                    <img src="https://via.placeholder.com/75?text=No+Image" alt="{{offer.item.name}}" width="50" class="img float-start me-2">
+                {% endif %}
+                   <span>{{offer.item.name}} | <strong>{{offer.item.asking}} BITS</strong>  x{{offer.item.amount}}</span>
+               </div>
+               <p class="small">{{offer.state}}, {{offer.updated_at|to_utc}}</p>
+               <p class="small text-danger">{{offer.failed_reason}}</p>
+           </li>
+        {% endfor %}
+        </ul>
+    </div>
+    <div class="col-sm-5 offset-sm-1">
+        <h3>My created offers history</h3>
+        <ul class="list-group">
+        {% for offer in created %}
+           {% if offer.item.details and offer.item.details != "None" %}
+           <li class="list-group-item"
+               data-bs-toggle="popover"
+               data-bs-trigger="hover"
+               data-bs-html="true"
+               data-bs-placement="top"
+               title="Unique traits"
+               data-bs-content="{{offer.item.details}}">
+           {% else %}
+           <li class="list-group-item">
+           {% endif %}
+               <div>
+                {% if offer.item.image %}
+                    <img src="{{offer.item.image}}" alt="{{offer.item.name}}" width="50" class="img float-start me-2">
+                {% else %}
+                    <img src="https://via.placeholder.com/75?text=No+Image" alt="{{offer.item.name}}" width="50" class="img float-start me-2">
+                {% endif %}
+                   <span>{{offer.item.name}} | <strong>{{offer.item.asking}} BITS</strong>  x{{offer.item.amount}}</span>
+               </div>
+                {% if offer.true_state == "SUBMITTED" %}
+                <p><button class="btn btn-danger btn-small" form="cancel_sale" name="offer" value="{{offer.uuid}}">CANCEL</button></p>
+                {% endif %}
+               <p class="small">{{offer.state}}, {{offer.updated_at|to_utc}}</p>
+               <p class="small text-danger">{{offer.failed_reason}}</p>
+           </li>
+        {% endfor %}
+        </ul>
+    </div>
+</div>
+
+<form action="../cancel/" id="cancel_sale" method="post">
+    {% csrf_token %}
+</form>
+
+<style>
+    li:hover { background-color: lightblue; }
+</style>
+{% endblock content %}

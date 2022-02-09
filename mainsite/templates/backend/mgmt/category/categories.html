@@ -1,0 +1,39 @@
+{% extends 'backend/bases/mgmt.html' %}
+
+{% block content %}
+<div class="row justify-content-center" style="padding: 10px;">
+  <div>
+    <h2>Market Categories</h2>
+    <a class="btn btn-success" href="/mgmt/market/category/new" style="margin-bottom: 12px;">Add new category</a>
+  </div>
+
+  <table class="table table-bordered table-hover">
+    <thead>
+      <tr>
+        <th scope="col">Name</th>
+        <th scope="col">Slug</th>
+        <th scope="col">Icon</th>
+        <th scope="col"></th>
+      </tr>
+    </thead>
+
+    <tbody>
+    {% for category in categories %}
+      <tr>
+        <td scope="row">{{ category.get_name }}</td>
+        <td style="width: 30%;">{{ category.slug }}</td>
+        <td style="width: 100px;">
+          {% if category.icon %}
+            <img src="{{ category.icon.url }}" alt="" class="rounded img-thumbnail" style="width:100px; background:gray;">
+          {% endif %}
+        </td>
+        <td class="text-center" style="width: 10%;">
+          <a href="/mgmt/market/category/update/{{ category.id }}" class="btn btn-primary">Edit</a>
+          <a href="/mgmt/market/category/delete/{{ category.id }}" class="btn btn-danger">Delete</a>
+        </td>
+      </tr>
+    {% endfor  %}
+    </tbody>
+  </table>
+</div>
+{% endblock content %}

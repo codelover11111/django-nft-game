@@ -1,0 +1,132 @@
+{% extends "frontend/bases/main.html" %}
+{% load static %}
+{% load markdown_extras %}
+
+
+{% block content %}
+{% if request.session.name %}
+<span class="my-cart desktop_view">
+    <span id="my-cart-title">
+        <span id="cart-badge">0</span>
+        <span>My Cart</span>
+    </span>
+    
+    <div class="mycart-tooltip">
+        <span class="tooltip-close">x</span>
+        <div class="cart-body">
+            
+        </div>
+        <div class="cart-footer">
+            <a href="/shop/cartitems/view/" class="btn btn-color checkout-btn" style="display: block;"><span>View Cart</span></a>
+        </div>
+    </div>
+</span>
+{% endif %}
+<section class="section section-shop" id="shop">
+    <div class="section-shop-wrap">
+        <h1 class="title">Shop</h1>
+        <p class="subtitle">Improve your game</p>
+
+        <div class="shop">
+            <div class="shop-content">
+                <div class="shop-header">
+                    <div class="shop-sorting-panel">
+                        <select class="shop-sorting" onchange="onSubCategorySelect(this)">
+                            <option value="All" {% if selectedSubCategory == "All" %} selected="selected"{% endif %} >All</option>
+                            {% for item in subCategories %}
+                                <option value="{{item.id}}" {% if item.id == selectedSubCategory|add:"0" %} selected="selected"{% endif %} >{{item.name}}</option>
+                            {% endfor  %}
+                        </select>
+                    </div>
+                    <div class="shop-filter">
+                        <ul class="shop-filter-list">
+                            {% for category in categories %}
+                                <li>
+                                    <input 
+                                        type="checkbox" 
+                                        id="{{ category.name }}" 
+                                        onclick="onCategorySelect(this)" 
+                                        data-id="{{ category.id }}" 
+                                        {% if selected_category != None and category.id in selected_category %} checked="checked"{% endif %}
+                                    >
+                                    <label for="{{ category.name }}">
+                                        {% if category.icon %}
+                                        <img src="{{ category.icon.url }}" alt="">
+                                        {% endif %}
+                                        <!-- <p><span>{{ category.name }}</span></p> -->
+                                    </label>
+                                </li>
+                            {% endfor  %}
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="shop-products">
+
+                    {% for product in products %}
+                        <!-- Products item start -->
+                        <div class="products-item">
+                            {% if product.put_quantity == 0 or product.out_quantity == product.put_quantity %}
+                                <div class="price-arx">
+                                    <p><span>SOLD OUT</span></p>
+                                </div>
+                            {% endif %}
+                            <div class="products-item-image">
+                                {% if product.image %}
+                                    <img src="{{ product.image.url }}" alt="product name">
+                                {% endif %}
+                                <a href="/shop/product/{{ product.id }}/" class="btn btn-color" >
+                                    <span>View</span>
+                                </a>
+                            </div>
+                            <h3 class="products-item-title">{{ product.title }}</h3>
+                            <p class="products-item-price">${{ product.price }}</p>
+                            <div class="products-item-meta">
+                                <!-- <span>{{ product.category.name }}</span> -->
+                                <!-- <span>Avatars</span> -->
+                            </div>
+                        </div>
+                    {% endfor  %}
+                    
+
+                </div>
+            </div>
+            <form method="GET">
+                <input type="hidden" name="sub_category" value="{{ selectedSubCategory }}">
+                <input type="hidden" name="category" value="{{ selectedCateIdStr }}">
+            </form>
+        </div>
+
+    </div>
+</section>
+
+<script>
+    function onSubCategorySelect(e) {
+        var value = e.value;
+        var el = document.getElementsByName('sub_category')[0];
+        var form = document.forms[0];
+        el.value = value;
+        form.submit();
+    }
+
+    function onCategorySelect(e) {
+        var id = e.dataset['id'];
+        var checked = e.checked;
+        var el = document.getElementsByName('category')[0];
+        var form = document.forms[0];
+        if(checked) {
+            if(el.value == '') {
+                el.value = e.dataset['id'];
+            } else {
+                el.value = el.value + "," + e.dataset['id'];
+            } 
+        } else {
+            var val_arr = el.value.split(',');
+            var result = val_arr.filter(val => val !== e.dataset['id'])
+            el.value = result.join();
+        }
+        form.submit();
+    }
+
+</script>
+{% endblock content %}

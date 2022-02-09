@@ -1,0 +1,100 @@
+{% extends "backend/bases/user.html" %}
+{% load static %}
+
+{% block content %}
+<div class="row">
+    <div class="col-sm-8 offset-lg-0 col-lg-6 p-3">
+        <form method="post" class="form col-10 offset-1" id="for_sale">
+            {% csrf_token %}
+            <div class="row overflow-auto mb-4" style="height: 50vh !important">
+                {% for item in items %}
+                <div class="form-check d-table"
+                   {% if item.details and item.details != "None" %}
+                     data-bs-toggle="popover"
+                     data-bs-trigger="hover"
+                     data-bs-html="true"
+                     data-bs-placement="top"
+                     title="Unique traits"
+                     data-bs-content="{{item.details}}"
+                   {% endif %}>
+                    <input  class="form-check-input"
+                            type="radio"
+                            data-name="{{item.name}}"
+                            data-amount="{{item.amount}}"
+                            name="id"
+                            value="{{item.id}}"
+                            id="radio-{{item.id}}"
+                            oninput="updateInfo(this)">
+                    <label class="form-check-label" for="radio-{{item.id}}">
+                    <div class="col clearfix d-table">
+                      {% if item.image %}
+                        <img src="{{item.image}}" alt="{{item.name}}" width="50" class="img float-start ms-2">
+                      {% else %}
+                        <img src="https://via.placeholder.com/75?text=No+Image" alt="{{item.name}}" width="50" class="img float-start ms-2">
+                      {% endif %}
+                        <span class="ms-2">{{item.name}}</span>
+                        <strong class="ms-2">{{item.amount}}</strong>
+                      {% if item.details and item.details != "None" %}
+                        <br><span class="text-success mark small ms-2">Info</span>
+                      {% endif %}
+                    </div>
+                    </label>
+                </div>
+                {% empty %}
+                <div class="alert alert-primary">
+                    Nothing to sell
+                </div>
+                {% endfor %}
+            </div>
+
+            <input type="hidden" value="" name="name" required="required">
+
+            <div class="input-group mb-3">
+                <div class="input-group-text">
+                    <label for="amount">Amount to sell</label>
+                </div>
+                <input type="number" id="amount" class="form-control" min="1" step="1" name="amount" required="required">
+            </div>
+
+            <div class="input-group mb-3">
+                <div class="input-group-text">
+                    <label for="asking">Asking bits</label>
+                </div>
+                <input type="number" id="asking" class="form-control" min="1" max="1000000000" step="1" name="asking" required="required" value="1">
+            </div>
+
+            <button id="submit_button" class="btn btn-success" form="for_sale" disabled="disabled">Post offer to market</button>
+        </form>
+    </div>
+</div>
+
+<script>
+   const form = document.forms.for_sale
+   const nameInput = form.querySelector("input[name='name']")
+   const amountInput = form.querySelector("input[name='amount']")
+
+   const button = form.submit_button
+
+   button.onclick = (e) => {
+     e.preventDefault()
+     button.disabled = true
+     if (confirm("Are you sure you want to sell this item?")) { form.submit() }
+     button.disabled = false
+   }
+
+   function updateInfo (e) {
+     nameInput.value = e.dataset.name
+     amountInput.setAttribute("max", e.dataset.amount)
+     amountInput.value = 1
+
+     button.disabled = false
+   }
+
+</script>
+
+<style>
+    .form-check:hover {
+        background-color: lightgray;
+    }
+</style>
+{% endblock content %}

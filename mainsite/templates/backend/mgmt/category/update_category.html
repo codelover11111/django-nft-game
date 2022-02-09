@@ -1,0 +1,62 @@
+{% extends 'backend/bases/mgmt.html' %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-12">
+    {% if success %}
+    <div class="alert alert-success">
+      <p>{{ success }}</p>
+    </div>
+    {% endif %}
+
+    {% if error %}
+    <div class="alert alert-danger">
+      <p>{{ error }}</p>
+    </div>
+    {% endif %}
+
+    <h2>Update Market Category</h2>
+
+    <hr>
+
+    <form method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+
+      <div class="form-group">
+        <label for="category-name">Name</label>
+        <input id="category-name" type="text" class="form-control" value="{{ category.name }}" name="name" required="true">
+      </div>
+
+      <div class="form-group">
+        <label for="category-parent" class="form-label">Parent</label>
+        <select name="parent" class="form-control" id="category-parent">
+          <option value="">---------</option>
+          {% for option in categories %}
+           <option value="{{ option.id }}"{% if option.id == category.parent_id %} selected="selected"{% endif %}>{{ option.get_name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="category-slug">Custom slug (optional)</label>
+        <input type="text"  name="slug" id="category-slug" class="form-control" pattern="[a-zA-Z0-9-]+" value="{{ category.slug }}">
+      </div>
+
+      {% if not category.parent_id %}
+        <div class="form-group">
+          <label for="category-icon">Icon</label>
+          <input type="file" name="icon" id="category-icon" class="form-control-file">
+        </div>
+
+        {% if category.icon %}
+          <img src="{{ category.icon.url }}" alt="" class="rounded img-thumbnail" style="background: gray;">
+        {% endif %}
+      {% endif %}
+      <hr>
+
+      <button class="btn btn-success">Update category</button>
+      <a href="/mgmt/market/categories/" class="btn btn-primary pull-right">All categories</a>
+    </form>
+  </div>
+</div>
+{% endblock content %}

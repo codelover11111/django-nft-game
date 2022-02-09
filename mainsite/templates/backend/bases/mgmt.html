@@ -1,0 +1,126 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+     <head>
+         <meta charset="utf-8">
+         <meta name="viewport" content="width=device-width, initial-scale=1">
+
+         <title>Space Misfits</title>
+
+         <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+         <script src="{% static 'public/js/jquery-3.2.1.min.js' %}"></script>
+         <link rel="stylesheet" href="{% static 'css/admin.css' %}">
+     </head>
+     <body>
+         <div id="throbber" style="display:none; min-height:120px;"></div>
+         <div id="noty-holder"></div>
+         <div id="wrapper">
+             <!-- Navigation -->
+             <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+                <!-- Brand and toggle get grouped for better mobile display -->
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="/">Space Misfits</a>
+                </div>
+                <!-- Top Menu Items -->
+                <ul class="nav navbar-right top-nav">
+                    <!-- stats -- >
+                    <li><a href="#" data-placement="bottom" data-toggle="tooltip" href="#" data-original-title="Stats"><i class="fa fa-bar-chart-o"></i>
+                        </a>
+                    </li>
+                    <!-- end stats -->
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Admin [{{ request.session.name }}] <b class="fa fa-angle-down"></b></a>
+
+                        <ul class="dropdown-menu">
+                            <li><a href="/mgmt/site_settings/"><i class="fa fa-fw fa-user"></i> Site Settings</a></li>
+                            <!--- -> <li><a href="#"><i class="fa fa-fw fa-cog"></i> Change Password</a></li><!-->
+                            <li class="divider"></li>
+                            <!-- - -><li><button form="signout-form"><i class="fa fa-fw fa-power-off"></i> Sign out</button></li><!---->
+                            <li><a href="#" onclick="document.querySelector('#signout-form').submit()"><i class="fa fa-fw fa-power-off"></i> Sign out</a></li>
+                        </ul>
+                    </li>
+                </ul>
+
+                <!-- Sidebar Menu Items - These collapse to the responsive navigation menu on small screens -->
+                <div class="collapse navbar-collapse navbar-ex1-collapse">
+                    <ul class="nav navbar-nav side-nav">
+                        <li>
+                            <a href="#" data-toggle="collapse" data-target="#submenu-1"><i class="fa fa-fw fa-shopping-cart"></i> Market <i class="fa fa-fw fa-angle-down pull-right"></i></a>
+                            <ul id="submenu-1" class="collapse">
+                                <li><a href="/mgmt/market/products/"><i class="fa fa-angle-double-right"></i> List products </a></li>
+                                <li><a href="/mgmt/market/product/new"><i class="fa fa-angle-double-right"></i> Add product</a></li>
+                                <li><a href="/mgmt/market/categories/"><i class="fa fa-angle-double-right"></i> List categories</a></li>
+                                <li><a href="/mgmt/market/category/new"><i class="fa fa-angle-double-right"></i> Add category</a></li>
+                            </ul>
+                        </li>
+                        <li>
+                            <a href="#" data-toggle="collapse" data-target="#submenu-2"><i class="fa fa-fw fa-rss-square"></i> Blog <i class="fa fa-fw fa-angle-down pull-right"></i></a>
+                            <ul id="submenu-2" class="collapse">
+                                <li><a href="/mgmt/blog/posts"><i class="fa fa-angle-double-right"></i> Posts</a></li>
+                                <li><a href="/mgmt/blog/post/new"><i class="fa fa-angle-double-right"></i> New post</a></li>
+                            </ul>
+                        </li>
+                        <li>
+                            <a href="/mgmt/orders/"><i class="fa fa-fw fa-truck"></i>  Order Management</a>
+                        </li>
+                        <li>
+                            <a href="#" data-toggle="collapse" data-target="#submenu-3"><i class="fa fa-fw fa-file-video-o"></i> Tutorial <i class="fa fa-fw fa-angle-down pull-right"></i></a>
+                            <ul id="submenu-3" class="collapse">
+                                <li><a href="/mgmt/tutorial/tutorials"><i class="fa fa-angle-double-right"></i> Tutorials</a></li>
+                                <li><a href="/mgmt/tutorial/new"><i class="fa fa-angle-double-right"></i> New tutorial</a></li>
+                            </ul>
+                        </li>
+                        <li>
+                            <a href="#" data-toggle="collapse" data-target="#submenu-4"><i class="fa fa-fw fa-user"></i> Team <i class="fa fa-fw fa-angle-down pull-right"></i></a>
+                            <ul id="submenu-4" class="collapse">
+                                <li><a href="/mgmt/team/members"><i class="fa fa-angle-double-right"></i> Members</a></li>
+                                <li><a href="/mgmt/team/member/new"><i class="fa fa-angle-double-right"></i> New member</a></li>
+                            </ul>
+                        </li>
+                        <li>
+                            <a href="/mgmt/users"><i class="fa fa-fw fa-users"></i> Users</a>
+                        </li>
+                        <li>
+                            <a href="/mgmt/campaigns/"><i class="fa fa-fw fa-trophy"></i>  Campaigns</a>
+                        </li>
+                        <li>
+                            <a href="/mgmt/site_settings/"><i class="fa fa-fw fa-cogs"></i>  Site Settings</a>
+                        </li>
+                        <li>
+                            <a href="/mgmt/tx/revision/"><i class="fa fa-fw fa-users"></i> Transactions Revision</a>
+                        </li>
+                    </ul>
+                </div>
+                <!-- /.navbar-collapse -->
+
+            </nav>
+
+            <div id="page-wrapper">
+                <div class="container-fluid">
+                    <!-- Page Heading -->
+                    <div class="row" id="main" >
+                        <div class="col-sm-12 col-md-12 well" id="content">
+                            {% block content %} {% endblock content %}
+                        </div>
+                    </div>
+                    <!-- /.row -->
+                </div>
+                <!-- /.container-fluid -->
+            </div>
+            <!-- /#page-wrapper -->
+        </div><!-- /#wrapper -->
+
+         <form action="/signout/" id="signout-form" method="post" style="display:none;">{% csrf_token %}</form>
+
+         <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+         <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+
+         <script src="{% static 'js/admin.js' %}"></script>
+     </body>
+</html>

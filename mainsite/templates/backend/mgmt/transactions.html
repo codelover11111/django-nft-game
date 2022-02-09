@@ -1,0 +1,62 @@
+{% extends "backend/bases/mgmt.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-9">
+    {% if not transactions %}
+        <div class="alert alert-primary">
+            <h4>No conflicting transactions</h4>
+        </div>
+    {% endif %}
+    {% for t in transactions %}
+        <div id="tx{{t.id}}" data-id="{{t.id}}" class="panel panel-primary" onmousedown="load_suspects(this)">
+            <div class="panel-heading"><b>TX: {{t.id}} - Player: {{t.player.nick_name}}</b></div>
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <ul class="list-group">
+                            <li class="list-group-item"><b>Tx ID</b> {{t.app_transaction_id}}</li>
+                            <li class="list-group-item"><b>Created at</b> {{t.transaction_time}}</li>
+                            <li class="list-group-item"><b>Action</b> {{t.action}}</li>
+                        </ul>
+                    </div>
+                    <div class="col-sm-6">
+                        <ul class="list-group">
+                            <li class="list-group-item"><b>Token Name</b> {{t.token_name}}</li>
+                            <li class="list-group-item"><b>Token ID</b> {{t.token_id}}</li>
+                            <li class="list-group-item"><b>Value</b> {{t.q_tokens}}</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+    </div>
+</div>
+
+<script>
+async function load_suspects(e) {
+  let dead = document.querySelector("#suspectsRow")
+  if (dead) { e.parentNode.removeChild(dead) }
+
+  const data = await fetch(`/mgmt/tx/suspects/${e.dataset.id}/`)
+  console.log(data)
+  const response = await data.text()
+
+  if (data.ok) {
+    let new_div = document.createElement("div")
+    new_div.id = 'suspectsRow'
+    new_div.innerHTML = response
+
+    e.parentNode.insertBefore(new_div, e.nextSibling)
+  }
+}
+
+function confirmSubmit(e) {
+    e.preventDefault()
+    const msg = 'Are you sure? This action cannot be undone'
+    // submit if it's ok
+    confirm(msg) && e.target.submit()
+}
+</script>
+{% endblock content%}

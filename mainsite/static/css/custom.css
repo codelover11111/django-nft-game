@@ -1,0 +1,177 @@
+.label_ch {
+    float: right;
+    padding-top: 5px;
+}
+
+.cr-dp {
+    margin-bottom: 10px;
+}
+
+.num-in input::-webkit-outer-spin-button,
+.num-in input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+.num-in input[type=number] {
+  -moz-appearance: textfield;
+}
+
+.setting_outer select {
+  background: #222345 !important;
+  border-radius: 6px;
+  border: none;
+  color: #fff !important;
+}
+
+.switch .switch_btn {
+  border-color: #2B314F;
+  background-color: #2B314F;
+}
+.switch .active{
+  background-color: #E71384 !important;
+  border-color: #E71384 !important;
+}
+.dashboard-btn-switch {
+  font-weight: bold;
+  font-size: 16px;
+  line-height: 16px;
+  letter-spacing: 0.1em;
+  padding: 8px 0px;
+  border: 2px solid;
+  transform: skew(-30deg);
+  color: #fff;
+  display: inline-block;
+  transition: all 0.3s ease-in-out;
+  cursor: pointer;
+  float: right;
+  width: 210px;
+  text-align: center;
+}
+.dashboard-btn-switch span {
+  transform: skew(30deg);
+  display: inline-block;
+  font-size: 14px !important;
+  font-weight: 700 !important;
+}
+.v680 {
+  color: white !important;
+  font-size: 24px;
+  font-weight: 600;
+}
+.v681 {
+  color: white !important;
+  font-size: 48px !important;
+  font-weight: 900 !important;
+  font-family: "Poppins", sans-serif;
+}
+.v682 {
+  color: #ff5ab2 !important;
+  font-size: 24px !important;
+  font-weight: 700 !important;
+  font-family: "Poppins", sans-serif;
+}
+
+.dashboard-btn-2 {
+  font-weight: bold;
+  font-size: 16px;
+  line-height: 16px;
+  letter-spacing: 0.1em;
+  padding: 8px 0px;
+  border: 2px solid;
+  border-image-source: linear-gradient(45deg, rgb(232 21 118), rgb(217 2 236));
+  border-image-slice: 1;
+  transform: skew(-30deg);
+  background-color: transparent;
+  color: #fff;
+  display: inline-block;
+  transition: all 0.3s ease-in-out;
+  cursor: pointer;
+  float: right;
+  width: 210px;
+  text-align: center;
+}
+.dashboard-btn-2:hover {
+  background: linear-gradient(45deg, rgb(232 21 118), rgb(217 2 236));
+}
+
+.dashboard-btn-2 span {
+  transform: skew(30deg);
+  display: inline-block;
+  font-size: 14px !important;
+  font-weight: 700 !important;
+
+}
+.custom-select {
+  position: relative;
+  font-family: Arial;
+  width:210px;
+}
+
+.custom-select select {
+  display: none; /*hide original SELECT element:*/
+}
+
+.select-selected {
+  background-color: #E71384;
+  transform: skew(-30deg);
+}
+.select-selected span {
+  display: inline-block;
+  transform: skew(30deg);
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  margin-left: 15px;
+}
+/*style the arrow inside the select element:*/
+.select-selected:after {
+  position: absolute;
+  content: "";
+  top: 14px;
+  right: 10px;
+  width: 0;
+  height: 0;
+  border: 6px solid transparent;
+  border-color: #fff transparent transparent transparent;
+  transform: skew(30deg);
+}
+
+/*point the arrow upwards when the select box is open (active):*/
+.select-selected.select-arrow-active:after {
+  border-color: transparent transparent #fff transparent;
+  top: 7px;
+}
+
+/*style the items (options), including the selected item:*/
+.select-items div,.select-selected {
+  color: #ffffff;
+  padding: 8px 16px;
+  border: 1px solid transparent;
+  border-color: transparent transparent rgba(0, 0, 0, 0.1) transparent;
+  cursor: pointer;
+  user-select: none;
+}
+.select-items div{
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  margin-left: 15px;
+}
+/*style items (options):*/
+.select-items {
+  position: absolute;
+  background-color: #751895;
+  top: 100%;
+  left: -10px;
+  right: 10px;
+  z-index: 99;
+}
+
+/*hide the items when the select box is closed:*/
+.select-hide {
+  display: none;
+}
+
+.select-items div:hover, .same-as-selected {
+  background-color: rgba(0, 0, 0, 0.1);
+}

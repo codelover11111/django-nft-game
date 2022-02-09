@@ -1,0 +1,29 @@
+{% extends "frontend/bases/main.html" %}
+{% load static %}
+{% load markdown_extras %}
+
+
+{% block content %}
+<section class="team" style="background-image: url('{% static '/public/assets/bg-9.jpg' %}');">
+    <div class="team-wrap">
+        <h1 class="section-title">Team</h1>
+        <p class="taem-description">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco.</p>
+        <div class="team-list">
+            {% for member in members %}
+            {% if member.image %}
+            <!-- Team item -->
+            <div class="team-item">
+                <div class="team-item-img">
+                    <img src="{{ member.image.url }}" alt="">
+                </div>
+                <div class="team-item-content">
+                    <h3>{{ member.name | safe }}</h3>
+                    <p>{{ member.role | safe }}</p>
+                </div>
+            </div>
+            {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock content %}

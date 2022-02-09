@@ -1,0 +1,192 @@
+{% extends "backend/bases/user.html" %}
+{% load static %}
+{% load local_date %}
+
+{% block content %}
+<div class="row">
+
+    <div class="offset-1 offset-sm-0 col-sm-10 p-0">
+        <h4>Marketplace</h4>
+
+        {% if errors %}
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        {% for error in errors %}
+          {{error}}<br>
+        {% endfor %}
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endif %}
+
+        <ul class="nav nav-pills">
+            <li class="nav-item">
+                <a class="nav-link active" href="/user/market/create/sell/">Create an offer</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/user/market/history/">Market history</a>
+            </li>
+        </ul>
+    </div>
+</div>
+
+<div class="row my-2">
+    <div class="col">
+        <form class="form" id="market-search">
+            <div class="col-sm-4 mb-2">
+                <input type="text" name="q" class="form-control">
+            </div>
+
+            <div class="my-2">
+                <p>Sort by</p>
+                <div>
+                    <input type="radio" name="sort" value="" id="radio-none">
+                    <label for="radio-none">None</label>
+                </div>
+                <div>
+                    <input type="radio" name="sort" value="name" id="radio-name">
+                    <label for="radio-name">By Name</label>
+                </div>
+                <div>
+                    <input type="radio" name="sort" value="bits" id="radio-bits">
+                    <label for="radio-bits">By Price</label>
+                </div>
+                <div>
+                    <input type="radio" name="sort" value="expiration" id="radio-expiration">
+                    <label for="radio-expiration">By Expiration date</label>
+                </div>
+                <div>
+                    <input type="radio" name="sort" value="quantity" id="radio-quantity">
+                    <label for="radio-quantity">By Quantity</label>
+                </div>
+            </div>
+
+            <div class="my-2">
+                <div>
+                    <input type="checkbox" name="order" value="reverse" id="check-reverse">
+                    <label for="check-reverse">Reverse</label>
+                </div>
+            </div>
+            <button class="btn btn-primary" form="market-search">Search</button>
+        </form>
+    </div>
+</div>
+
+{% if word %}
+<div class="row">
+    <div class="col">
+        <p class="strong">Showing results for "{{word}}"</p>
+        <button class="btn btn-sm btn-primary" onclick="location=location.pathname">Clear search</button>
+    </div>
+</div>
+{% endif %}
+
+<div class="row">
+    <div class="col-sm-10">
+        <table class="table table-responsive text-center align-middle">
+            {% if offers %}
+            <thead>
+                <tr>
+                    <th scope="col"></th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Qty</th>
+                    <th scope="col">Bits</th>
+                    <th scope="col">Valid for</th>
+                    <th scope="col"></th>
+                </tr>
+            </thead>
+            {% endif %}
+            <tbody>
+            {% for offer in offers %}
+                {% if offer.entry.details and offer.entry.details != "None" %}
+                <tr id="{{offer.obj.uuid}}"
+                     data-bs-toggle="popover"
+                     data-bs-trigger="hover"
+                     data-bs-html="true"
+                     data-bs-placement="top"
+                     title="Unique traits"
+                     data-bs-content="{{offer.entry.details}}">
+                {% else %}
+                <tr id="{{offer.obj.uuid}}">
+                {% endif %}
+                    <td>
+                    {% if offer.entry.image %}
+                        <img src="{{offer.entry.image}}" alt="{{offer.entry.name}}" width="50" class="img float-start ms-2">
+                    {% else %}
+                        <img src="https://via.placeholder.com/75?text=No+Image" alt="{{offer.entry.name}}" width="50" class="img float-start ms-2">
+                    {% endif %}
+                    </td>
+                {% if offer.entry.details and offer.entry.details != "None" %}
+                    <td class="text-success"><strong>{{offer.entry.name}}</strong><br><small>By: {{offer.obj.player_a.nick_name}}</small></td>
+                {% else %}
+                    <td>{{offer.entry.name}}<br><small>By: {{offer.obj.player_a.nick_name}}</small></td>
+                {% endif %}
+                    <td>{{offer.entry.amount}}</td>
+                    <td>{{offer.entry.asking}}</td>
+                    <td>{{offer.expires|delta}}</td>
+                    {% if offer.mine %}
+                    <td><button class="btn btn-danger btn-sm" form="cancel_sale" name="offer" value="{{offer.obj.uuid}}">CANCEL</button></td>
+                    {% else %}
+                    <td><a class="btn btn-primary btn-sm" data-id="{{offer.obj.uuid}}" onclick="purchase(this)">Buy</a></td>
+                    {% endif %}
+                </tr>
+            {% empty %}
+                <div class="alert alert-primary mt-3">There are no offers in the market yet</div>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% csrf_token %}
+</div>
+
+<div class="row">
+    <nav aria-label="Page navigation example">
+        <ul class="pagination">
+        {% if offers.has_previous %}
+          <li class="page-item"><a class="page-link" href="?q={{word}}&sort={{sort}}&order={{order}}&page={{offers.previous_page_number}}">Previous</a></li>
+        {% endif %}
+          <li class="page-item"><a class="page-link" href="#">{{offers.number}} of {{offers.paginator.num_pages}}</a></li>
+        {% if offers.has_next %}
+          <li class="page-item"><a class="page-link" href="?q={{word}}&sort={{sort}}&order={{order}}&page={{offers.next_page_number}}">Next</a></li>
+        {% endif %}
+        </ul>
+    </nav>
+</div>
+
+<form action="./cancel/" id="cancel_sale" method="post">
+    {% csrf_token %}
+</form>
+
+
+<script>
+    function purchase (e) {
+        e.disabled = true
+        const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+        const request = new Request(
+            `/user/market/purchase/${e.dataset.id}/`,
+            { headers: { 'X-CSRFToken': csrftoken }}
+        );
+
+        fetch(request, {
+            method: 'POST',
+            mode: 'same-origin',
+            data: `csrfmiddlewaretoken=${csrftoken}`,
+        }).then(function (response) {
+            return response.json()
+        }).then(function (data) {
+            if (data.status && data.data === "COMPLETED") {
+                alert("done")
+                const element = document.getElementById(e.dataset.id)
+                element.remove()
+            } else {
+                if (data.error === 'OFFER_EXPIRED') { location.reload() }
+                else { alert(data.error) }
+            }
+        });
+        if (e) e.disabled = false
+    }
+</script>
+
+<style>
+    tr:hover { background-color: lightblue; }
+</style>
+{% endblock content %}

@@ -1,0 +1,39 @@
+{% extends 'backend/bases/mgmt.html' %}
+{% load static %}
+
+{% block content %}
+<div class="row justify-content-center tutorials">
+  <div>
+    <h2>Tutorial</h2>
+    <a class="btn btn-success" href="/mgmt/tutorial/new/">Create a tutorial</a>
+  </div>
+
+  <table class="table table-bordered table-hover">
+    <thead>
+      <tr>
+        <th scope="col">No</th>
+        <th scope="col">Title</th>
+        <th scope="col">Description</th>
+        <th scope="col">Length</th>
+        <th scope="col">Poster</th>
+        <th scope="col"></th>
+        <th scope="col"></th>
+      </tr>
+    </thead>
+
+    <tbody>
+    {% for tutorial in tutorials %}
+      <tr>
+        <th>{{forloop.counter}}</th>
+        <th scope="row">{{ tutorial.title }}</th>
+        <td>{{ tutorial.description }}</td>
+        <td>{{ tutorial.length }}</td>
+        <td><img class="tutorial-poster" src="{{ tutorial.poster.url }}" alt=""></td>
+        <td><a href="/mgmt/tutorial/{{ tutorial.id }}/" class="btn btn-primary">Edit</a></td>
+        <td><a href="/mgmt/tutorial/delete/{{ tutorial.id }}/" class="btn btn-danger">Delete</a></td>
+      </tr>
+    {% endfor  %}
+    </tbody>
+  </table>
+</div>
+{% endblock content %}

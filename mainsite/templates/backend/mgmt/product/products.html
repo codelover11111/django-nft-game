@@ -1,0 +1,55 @@
+{% extends 'backend/bases/mgmt.html' %}
+{% load mathfilters %}
+
+{% block content %}
+<div class="row justify-content-center" style="padding: 10px;">
+  <div>
+    <h2>Market product</h2>
+    <a class="btn btn-success" href="/mgmt/market/product/new" style="margin-bottom: 12px;">Add new product</a>
+    <a href="/api/products/export/" class="btn btn-info ml-3" style="margin: 0 0 12px 10px;">Export</a>
+  </div>
+
+  <table class="table table-bordered table-hover">
+    <thead>
+      <tr>
+        <th scope="col">Name</th>
+        <th scope="col">Description</th>
+        <th scope="col">Image</th>
+        <th scope="col">Quantity</th>
+        <th scope="col">Sold</th>
+        <th scope="col">Stock</th>
+        <th scope="col">Status</th>
+        <th scope="col">Limit</th>
+        <th scope="col"></th>
+      </tr>
+    </thead>
+
+    <tbody>
+    {% for product in products %}
+      <tr>
+        <th scope="row" style="width: 200px;">{{ product.title }}</th>
+        <td>{{ product.description }}</td>
+        <td>
+          {% if product.image %}
+            <img src="{{ product.image.url }}" alt="" class="rounded img-thumbnail" style="width:100px;">
+          {% endif %}
+        </td>
+        <td style="width: 100px; text-align: right;">{{ product.put_quantity }}</td>
+        <td style="width: 100px; text-align: right;">{{ product.out_quantity }}</td>
+        <td style="width: 100px; text-align: right;">{{ product.put_quantity|sub:product.out_quantity }}</td>
+        <td>{% if product.status == 1 %}Active{% else %}Inactive{% endif %}</td>
+        <td>{% if product.is_limit == 1 %}Active{% else %}Inactive{% endif %} <span class="label label-warning">{{product.limit_quantity}}</span></td>
+        <td class="text-center" style="width: 10%;">
+          <div style="display: flex;flex-direction: row;">
+            <a href="/mgmt/market/product/update/{{ product.id }}" class="btn btn-primary">Edit</a>
+            <a href="/mgmt/market/product/delete/{{ product.id }}" class="btn btn-danger">Delete</a>
+            <a href="/mgmt/market/product/preview/{{ product.id }}/" class="btn btn-warning">Preview</a>
+            <a href="/mgmt/market/product/duplicate/{{ product.id }}/" class="btn btn-success">Duplicate</a>
+          </div>
+        </td>
+      </tr>
+    {% endfor  %}
+    </tbody>
+  </table>
+</div>
+{% endblock content %}

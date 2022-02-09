@@ -1,0 +1,38 @@
+{% extends "frontend/bases/main.html" %}
+{% load static %}
+
+{% block content %}
+<section class="account" style="background-image: url('{% static '/public/assets/bg-9.jpg' %}');">
+    <div class="account-wrap">
+        <h1>sign in</h1>
+        {% if error_message %}
+        <div class="alert alert-warning">{{ error_message }}</div>
+        {% endif %}
+        {% if user_fail_warn %}
+        <div class="alert alert-warning">
+            <p>Be careful! Too many failed sign in attempts will be penalized with a ban.</p>
+            <br>
+            <p>If you're having problems logging in <a href="/recovery/">try resetting your password</a></p>
+        </div>
+        {% endif %}
+        {% if user_hopping_warn %}
+        <div class="alert alert-warning">
+            <p>Be careful! Trying too many different users that are not yours is penalized with a ban.</p>
+            <br>
+            <p>If you have an email address set up, <a href="/recovery/">try resetting your password</a></p>
+        </div>
+        {% endif %}
+
+        <form method="post" class="account-form" id="sign-in">
+            {% csrf_token %}
+            <p><input type="text" name="user" placeholder="Username" required /></p>
+            <p><input type="password" name="pass" placeholder="Password" /></p>
+            <div class="btn-group">
+                <a href="/signup/" class="btn"><span>Create an account</span></a>
+                <button type="submit" class="btn btn-color"><span>Sign In</span></button>
+            </div>
+            <p class="form-description">Or maybe <a href="/recovery/">Forgot your password?</a></p>
+        </form>
+    </div>
+</section>
+{% endblock content %}

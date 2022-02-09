@@ -1,0 +1,110 @@
+{% extends "backend/bases/layout.html" %}
+{% load static %}
+
+{% block content %}
+<!-- Start app main Content -->
+<div class="main-content">
+  <div class="trading_list_outer market_create_outer"> 
+    <form method="post" class="form col-10 offset-1" id="for_sale">
+      <h2 class="section-title mb-5">Marketplace</h2>
+      {% csrf_token %}
+      <div class="row market_outer_content">
+        {% for item in items %}
+          <div class="col-12"
+            {% if item.details and item.details != "None" %}
+            data-bs-toggle="popover"
+            data-bs-trigger="hover"
+            data-bs-html="true"
+            data-bs-placement="top"
+            title="Unique traits"
+            data-bs-content="{{item.details}}"
+          {% endif %}>
+              <div class="card">
+                  <div class="medias-group">
+                      <div class="medias">
+                        {% if item.image %}
+                        <img class="mr-3" src="{{item.image}}" alt="{{item.name}}">
+                        {% else %}
+                        <img class="mr-3" src="https://via.placeholder.com/75?text=No+Image" alt="{{item.name}}">
+                        {% endif %}
+                        <div class="media-body">
+                            <div class="item-title">
+                                <p>{{item.name}} <strong class="ms-2">{{item.amount}}</strong></p>
+                                {% if item.details and item.details != "None" %}
+                                <span class="text-success mark small ms-2">Info</span>
+                                {% endif %}
+                                <label class="market-create-checkmark">
+                                    <input type="radio"
+                                          data-name="{{item.name}}"
+                                          data-amount="{{item.amount}}"
+                                          name="id"
+                                          value="{{item.id}}"
+                                          id="radio-{{item.id}}"
+                                          oninput="updateInfo(this)"/>
+                                    <span class="checkmark" for="radio-{{item.id}}"></span>
+                                </label>
+                            </div>
+                        </div>
+                      </div>
+                  </div>
+              </div>
+          </div>
+          {% empty %}
+          <div class="alert alert-primary">
+            Nothing to sell
+          </div>
+          {% endfor %}
+
+          <input type="hidden" value="" name="name" required="required">
+      </div>
+      <div class="col-12">
+        <div class="post-section">
+            <div class="amount-to-sell">
+                <label for="amount">Amount to sell</label>
+                <input type="number" id="amount" class="form-control" min="1" step="1" name="amount" required="required">
+            </div>
+            <div class="asking-bits">
+                <label for="asking">Asking bits</label>
+                <input type="number" id="asking" class="form-control" min="1" max="1000000000" step="1" name="asking" required="required" value="1">
+            </div>
+            <div class="btn-group">
+                <div class="post-btn">
+                  <button id="submit_button" class="dashboard-btn" form="for_sale" disabled="disabled"><span>Post offer to market</span></button>
+                </div>
+            </div>
+        </div>
+    </div>
+    </form>
+  </div>
+</div>
+
+<script>
+   const form = document.forms.for_sale
+   const nameInput = form.querySelector("input[name='name']")
+   const amountInput = form.querySelector("input[name='amount']")
+
+   const button = form.submit_button
+
+   button.onclick = (e) => {
+     e.preventDefault()
+     button.disabled = true
+     if (confirm("Are you sure you want to sell this item?")) { form.submit() }
+     button.disabled = false
+   }
+
+   function updateInfo (e) {
+     nameInput.value = e.dataset.name
+     amountInput.setAttribute("max", e.dataset.amount)
+     amountInput.value = 1
+
+     button.disabled = false
+   }
+
+</script>
+
+<style>
+    .form-check:hover {
+        background-color: lightgray;
+    }
+</style>
+{% endblock content %}

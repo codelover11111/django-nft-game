@@ -1,0 +1,70 @@
+{% extends "bases/main.html" %}
+{% load static %}
+{% load markdown_extras %}
+
+
+{% block content %}
+<section class="blog" style="background-image: url('{% static '/public/assets/bg-6.jpg' %}');">
+   <div class="blog-wrap">
+       <h1>Blog</h1>
+        <div class="blog-posts">
+            <!-- Blog posts content -->
+            <div class="blog-posts-wrap">
+            {% if post %}
+                <div class="blog-posts-content-image">
+                {% if post.cover %}
+                    <img src="{{ post.cover.url }}" alt="">
+                {% else %}
+                    <img src="{% static '/public/assets/single-post.jpg' %}" alt="">
+                {% endif %}
+                </div>
+                <h2>{{ post.title | safe }}</h2>
+                <div class="blog-post-meta">
+                    <span>{{ post.created_at }}</span>
+                </div>
+                <div class="blog-post-content">
+                    {{ post.content | markdown | safe }}
+                </div>
+            {% endif %}
+            </div>
+
+            <!-- Blog posts filter -->
+            <div class="blog-posts-filter">
+                <h3>All posts</h3>
+
+                <!-- Blog posts archive -->
+                <div class="blog-posts-archive" id="blog-posts-archive">
+
+                {% for date, items in by_date.items %}
+                    <!-- Post archive item start -->
+                    <div class="archive-item">
+                        <div class="archive-item-head">
+                            <p>{{ date }} <span>({{ items.count }})</span></p>
+                        </div>
+                        <div class="archive-item-body">
+                        {% for item in items.titles %}
+                            <h4 class="{% if item.id == post.id %}active{% endif %}">
+                                <a href="/news/{{ item.slug }}/">{{ item.title }}</a>
+                            </h4>
+                        {% endfor %}
+                        </div>
+                    </div>
+                    <!-- Post archive item end -->
+                {% endfor %}
+
+                </div>
+
+                <!-- Newsletter -->
+                <div class="newsletter">
+                    <h3>Newsletter</h3>
+                    <p>{{ content.newsletter_description }}</p>
+                    <form action="" id="newsletter">
+                        <input type="email" placeholder="Enter your Email">
+                        <button type="submit" class="btn btn-color"><span>Subscribe</span></button>
+                    </form>
+                </div>
+            </div>
+        </div>
+   </div>
+</section>
+{% endblock content %}

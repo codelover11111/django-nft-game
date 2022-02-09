@@ -1,0 +1,66 @@
+{% extends 'backend/bases/mgmt.html' %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-6">
+    {% if success %}
+    <div class="alert alert-success">
+      <p>{{ success }}</p>
+    </div>
+    {% endif %}
+
+    {% if error %}
+    <div class="alert alert-danger">
+      <p>{{ error }}</p>
+    </div>
+    {% endif %}
+
+    <h2>Update Blog Post</h2>
+    <a href="/mgmt/blog/preview/{{ post.id }}/" class="btn btn-warning">Preview</a>
+
+    <hr>
+
+    <form method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+
+      <div class="form-group">
+        <label for="post-title">Title</label>
+        <input id="post-title" type="text" class="form-control" value="{{ post.title }}" name="title" required="true">
+      </div>
+
+      <div class="form-group">
+        <label for="post-preview">Preview Image</label>
+        <input type="file" name="preview" id="post-preview" class="form-control-file">
+      </div>
+
+      {% if post.preview %}
+      <img src="{{ post.preview.url }}" alt="" class="rounded img-thumbnail">
+      {% endif %}
+
+      <div class="form-group">
+        <label for="post-cover">Cover Image</label>
+        <input type="file" name="cover" id="post-cover" class="form-control-file">
+      </div>
+
+      {% if post.cover %}
+      <img src="{{ post.cover.url }}" alt="" class="rounded img-thumbnail">
+      {% endif %}
+
+      <div class="form-group">
+        <label for="post-text">Post content</label>
+        <textarea name="content" id="post-text" rows="20" class="form-control">{{ post.content }}</textarea>
+      </div>
+
+
+      <div class="form-group">
+        <label for="post-slug">Custom slug (optional)</label>
+        <input type="text" name="slug" id="post-slug" value="{{ post.slug }}" class="form-control" pattern="[a-zA-Z0-9-]+" maxlength="32">
+      </div>
+
+      <hr>
+
+      <button class="btn btn-success">Update</button>
+    </form>
+  </div>
+</div>
+{% endblock content %}

@@ -1,0 +1,185 @@
+{% extends "backend/bases/layout.html" %} {% block content %}
+<div class="main-content">
+  <div class="row setting_outer">
+    <div class="col-md-12 mt-3">
+      <h1 class="font-48 mb_10">Player info</h1>
+      <div class="card">
+        <div class="card-body">
+          <div class="inner">
+            <div class="name">
+              <span class="d-block">
+                <span class="player_name">{{ player.nick_name }}</span>
+              </span>
+              <span class="d-block mt-2">
+                {% if player.email %}
+                <span class="player_email"
+                  >{{ player.email }} {% if email_confirmed %}
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    fill="currentColor"
+                    class="bi bi-check-circle-fill text-success"
+                    viewBox="0 0 16 16"
+                  >
+                    <path
+                      d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"
+                    />
+                  </svg>
+                  {% else %}
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    fill="currentColor"
+                    class="bi bi-exclamation-triangle-fill text-danger"
+                    viewBox="0 0 16 16"
+                  >
+                    <path
+                      d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"
+                    />
+                  </svg>
+                  {% endif %}
+                </span>
+                {% else %}
+                <p class="alert alert-danger">
+                  User doesn't have an email address
+                </p>
+                {% endif %}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- WIP Start -->
+    <div class="col-md-12 mt-5">
+      <h3 class="font_20 mb_10">Notification settings</h3>
+      <p id="notification_status"></p>
+      <button
+        id="notification_button"
+        class="dashboard-btn mt-2"
+        onclick="notif_ws.ask_permission(this)"
+      >
+        <span>Enable notifications</span>
+      </button>
+    </div>
+    <!-- WIP End -->
+
+    <div class="col-md-12 mt-5 wallet-address">
+      <h3 class="font_20 mb_10">Wallet address</h3>
+      {% if player.wallet %} {% if refresh_error %}
+      <div class="alert alert-danger">{{ refresh_error }}</div>
+      {% endif %}
+      <div class="card">
+        <div class="card-body">
+          <div class="inner">
+            <div class="address">
+              <span class="d-flex">
+                <div class="form-group mb-2">
+                  <form id="refresh_wallet" action="/user/refresh/wallet/" method="post">
+                    {% csrf_token %}
+                    <input
+                      type="email"
+                      class="form-control"
+                      id="email"
+                      name="email"
+                      placeholder="Wallet Address"
+                      value="{{player.wallet}}"
+                      readonly
+                    />
+                  </form>
+                </div>
+              </span>
+              <button class="dashboard-btn mt-2" form="refresh_wallet">
+                <span>Refresh</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% else %}
+      <p>You have not yet linked your wallet</p>
+      {% endif %}
+    </div>
+    <div class="col-md-12 mt-5">
+      <h3 class="font_20 mb_10">Update Email</h3>
+      <div class="card">
+        <div class="card-body">
+          <div class="inner">
+            <div class="update_email">
+              <span class="d-block">
+                <form
+                  id="update_email"
+                  action="/user/update/email/"
+                  method="post"
+                >
+                  {% if email_error %}
+                  <div class="alert alert-danger">{{ email_error }}</div>
+                  {% endif %} {% csrf_token %}
+                  <div class="form-group mb-2">
+                    <input
+                      type="email"
+                      class="form-control"
+                      id="email"
+                      name="email"
+                      placeholder="Your Email"
+                    />
+                  </div>
+                  <button class="dashboard-btn mt-2" form="update_email">
+                    <span>Update Email</span>
+                  </button>
+                </form>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-12 mt-1">
+      <h3 class="font_20 mb_10">Update Password</h3>
+      <div class="card">
+        <div class="card-body">
+          <div class="inner">
+            <div class="address">
+              <span class="d-block">
+                <form
+                  id="update_password"
+                  action="/user/update/password/"
+                  method="post"
+                >
+                  {% if pass_error %}
+                  <div class="alert alert-danger">{{ pass_error }}</div>
+                  {% endif %} {% csrf_token %}
+                  <div class="form-group mb-2">
+                    <input
+                      type="password"
+                      class="form-control mb-2"
+                      id="password"
+                      name="password"
+                      placeholder="New Password"
+                      required
+                    />
+                    <input
+                      type="password"
+                      class="form-control"
+                      id="password_confirmation"
+                      name="password_confirmation"
+                      placeholder="Confirm Password"
+                      required
+                    />
+                  </div>
+                  <button class="dashboard-btn mt-2" form="update_password">
+                    <span>Update Password</span>
+                  </button>
+                </form>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}

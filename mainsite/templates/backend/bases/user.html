@@ -1,0 +1,106 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+ <meta charset="utf-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1">
+
+ <title>Space Misfits</title>
+ <script src="{% static 'public/js/jquery-3.2.1.min.js' %}"></script>
+ <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+ <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+ <script src="{% static 'js/user.js' %}"></script>
+ <script src="{% static 'public/js/@metamask/onboarding/dist/metamask-onboarding.bundle.js' %}"></script>
+ <!-- <link rel="stylesheet" href="{% static 'css/temp.css' %}"> -->
+ <link rel="stylesheet" href="{% static 'css/custom.css' %}">
+
+ <style>
+ body {
+  overflow: hidden auto;
+}
+</style>
+</head>
+<body>
+  <nav class="navbar navbar-expand-sm">
+    <div class="container-fluid">
+      <a href="/" class="navbar-brand text-decorations-none">Space Misfits</a>
+
+      <ul class="navbar-nav me-auto">
+        {% if request.session.name %}
+        <li class="nav-item dropdown">
+          <a href="#"
+          class="nav-link dropdown-toggle"
+          id="userDropdown"
+          role="button"
+          data-bs-toggle="dropdown"
+          aria-expanded="false">
+          {{ request.session.name }}
+        </a>
+        <ul class="dropdown-menu" aria-labelledby="userDropdown">
+          <li><button form="signout-form" class="dropdown-item btn btn-danger">Sign out</button></li>
+        </ul>
+      </li>
+      <li class="nav-item">
+        <button id="notification_button" class="btn btn-primary" onclick="notif_ws.ask_permission(this)">Toggle notifications</button>
+      </li>
+      {% else %}
+      <li class="nav-item"><a href="/signin/" class="nav-link">Sign in</a></li>
+      {% endif %}
+    </ul>
+  </div>
+</nav>
+
+<div id="container">
+  <div class="row">
+    <div class="col-xs-12 col-sm-4 col-md-3 col-lg-2 p-3">
+      <ul class="nav nav-pills flex-column mb-auto">
+        <li class="nav-item">
+          <a class="nav-link" href="/user/">Settings</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" href="/user/items/">Items &amp; Bits</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" href="/user/tokens/">Assets</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" href="/user/trading/">Trading</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" href="/user/market/">Market</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" href="/user/transactions/queue/">Transactions queue</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" href="/user/crown">Wallet</a>
+        </li>
+      </ul>
+    </div>
+
+    <div class="col-xs-12 col-sm">
+      {% block content %}{% endblock content %}
+    </div>
+  </div>
+</div>
+
+<form action="/signout/" id="signout-form" method="post" style="display:none;">{% csrf_token %}</form>
+<script>
+  const notif_ws = new NotificationWS("wss://{{request.session.notif_url}}/user/{{request.session.secret_key}}/")
+
+  document.addEventListener("DOMContentLoaded", () => {
+    // enable popovers
+    var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'))
+    var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
+      return new bootstrap.Popover(popoverTriggerEl)
+    })
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,56 @@
+{% extends "frontend/bases/main.html" %}
+{% load static %}
+
+{% block content %}
+<div class="main-content">
+    <div class="news_section">
+        <div class="container">
+            <div class="sec_title">
+                <h1><span>Two-Step Authentication</span></h1>
+            </div>
+
+            <div class="row">
+                <div class="account-form-section tfa-form-section">
+                    <form method="post" action="/2fa/" class="account-form tfa-form" id="2fa">
+                        {% csrf_token %}
+                        {% if error_message %}
+                        <div class="alert alert-warning">
+                            <p>{{ error_message }}</p>
+                        </div>
+                        {% endif %}
+                        {% if success_message %}
+                        <div class="alert alert-success">
+                            <p>{{ success_message }}</p>
+                        </div>
+                        {% endif %}
+                        <div class="tfa-qr">
+                            <img src="https://chart.apis.google.com/chart?cht=qr&chs=250x250&chl={{ qr_code_url }}"/>
+                            <p>Please scan this qr code to get a verification code with google authenticator.</p>
+                        </div>
+                        <div id="dialog">
+                            <input type="text" maxLength="1" size="1" min="0" max="9" pattern="[0-9]{1}" class="tfa-input" name="tfa1"/>
+                            <input type="text" maxLength="1" size="1" min="0" max="9" pattern="[0-9]{1}" class="tfa-input" name="tfa2"/>
+                            <input type="text" maxLength="1" size="1" min="0" max="9" pattern="[0-9]{1}" class="tfa-input" name="tfa3"/>
+                            <input type="text" maxLength="1" size="1" min="0" max="9" pattern="[0-9]{1}" class="tfa-input" name="tfa4"/>
+                            <input type="text" maxLength="1" size="1" min="0" max="9" pattern="[0-9]{1}" class="tfa-input" name="tfa5"/>
+                            <input type="text" maxLength="1" size="1" min="0" max="9" pattern="[0-9]{1}" class="tfa-input" name="tfa6"/>
+                        </div>
+                        <div class="btn-group">
+                            <a href="/signin/" class="btn"><span>Back</span></a>
+                            <button type="submit" class="btn btn-color"><span>Verify</span></button>
+                        </div>
+                    </form>
+                    <form method="post" action="/2fa/email/" class="verification-email-form">
+                        {% csrf_token %}
+                        {% if success_message %}
+                            <p class="form-description"> Didn't get an email yet? Please click <button type="submit">here</button> to send again.</p>
+                        {% else %}
+                            <p class="form-description"> Want to get a verification code via your email? If then, please click <button type="submit">here</button></p>
+                        {% endif %}
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

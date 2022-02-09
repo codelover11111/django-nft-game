@@ -1,0 +1,45 @@
+{% extends "frontend/bases/old_main.html" %}
+{% load local_date %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-6">
+    <h1>{{ campaign.name }}</h1>
+    <p class="lead">{{ campaign.description }}</p>
+    {% if campaign.status == 'GOING' %}
+    <b>Active</b>
+    {% else %}
+    <b>Finished</b>
+    {% endif %}
+
+    <p>Start date: {{ campaign.start|to_est }}</p>
+    {% if campaign.end %}
+    <p>Ending date: {{ campaign.end|to_est }}</p>
+    {% endif %}
+  </div>
+</div>
+
+<div class="row justify-content-center">
+  <div class="col-6">
+    <table class="table table-bordered table-hover">
+      <thead>
+      <tr>
+        <th scope="col">Position</th>
+        <th scope="col">Player</th>
+        <th scope="col">Score</th>
+      </tr>
+      </thead>
+      <tbody>
+      {% for player in campaign.leaderboard%}
+      <tr>
+        <th scope="row">{{ player.position }}</th>
+        <td>{{ player.nick }}</td>
+        <td>{{ player.score }}</td>
+      </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+{% endblock content %}

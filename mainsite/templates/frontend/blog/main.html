@@ -1,0 +1,61 @@
+{% extends "frontend/bases/main.html" %}
+{% load static %}
+{% load markdown_extras %}
+
+
+{% block content %}
+<div class="main-content">
+    <div class="news_section">
+        <div class="container">
+            <div class="sec_title">
+                <h1><span>LATEST</span> NEWS</h1>
+                <p>Learn what is happening in and around Space Misfits.</p>
+            </div>
+
+            <div class="row">
+                {% for post in posts %}
+                    {% if post.preview %}
+                    <div class="col-lg-6 col-12">
+                        <div class="news_block">
+                            <div class="img_block">
+                                <img src="{{ post.preview.url }}" alt="">
+                            </div>
+                            <div class="content_block">
+                                <span class="date">{{ post.created_at | date }}</span>
+                                <h4 class="truncate-1">{{ post.title | safe }}</h4>
+                                <div class="blog-short-content truncate-1">
+                                    <span>{{ post.content | markdown | safe }}</span>
+                                </div>
+                                <a href="/news/{{ post.slug }}/" class="btn btn-color text-uppercase read-more">
+                                    <span>Read More</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+
+    <section class="newslatter_section">
+        <div class="container">
+            <div class="section-content text-center">
+                <h2 class=""><span class="perpal-text">NEWSLETTER</span></h2>
+                <p class="section-description text-white">SIGN UP TO GET UPDATES.</p>
+            </div>
+            <div class="form_block">
+                <form id="news_letter_form">
+                    {% csrf_token %}
+                    <div class="input-filed">
+                        <input id="subscribe_email" type="email" placeholder="Enter your Email" required />
+                    </div>
+                    <button class="btn btn-color text-uppercase" type="submit"><span>Subscribe</span></button>
+
+                </form>
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock content %}

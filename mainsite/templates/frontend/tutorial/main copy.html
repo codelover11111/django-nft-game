@@ -1,0 +1,56 @@
+{% extends "frontend/bases/main.html" %}
+{% load static %}
+{% load markdown_extras %}
+
+
+{% block content %}
+<section class="tutorial" style="background-image: url('{% static '/public/assets/bg-9.jpg' %}');">
+    <div class="tutorial-wrap">
+        <h1>Tutorial</h1>
+        <div class="tutorial-slider">
+            {% for tutorial in tutorials %}
+            {% if tutorial.poster and tutorial.video %}
+            <!-- Slider item -->
+            <div class="tutorial-slider-item">
+                <video loop="" class="tutorial-video" poster="{{ tutorial.poster.url }}">
+                    <source src="{{ tutorial.video.url }}" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+                <div class="tutorial-slider-content">
+                    <h2>{{ tutorial.title | safe }}</h2>
+                    <p class="tutorial-video-meta">
+                        <span>{{ tutorial.created_at | date:"Y" | safe }}</span>
+                        <span>{{ tutorial.length | safe }}</span>
+                    </p>
+                    <p class="tutorial-description">{{ tutorial.description | safe }}</p>
+                    <div class="video-controls">
+                        <span class="play-video">Play Now</span>
+                        <span class="pause-video">Pause</span>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+            {% endfor %}
+        </div>
+
+        <h2>Other tutorials</h2>
+        <div class="tutorial-slider-nav">
+            {% for tutorial in tutorials %}
+            {% if tutorial.poster and tutorial.video %}
+            <!-- slider item -->
+            <div class="tutorial-slider-nav-item">
+                <div class="slider-nav-img">
+                    <img src="{{ tutorial.poster.url}}" alt="" class="other-tutorials-poster">
+                </div>
+                <div class="slider-nav-content">
+                    <h3>{{ tutorial.title | safe }}</h3>
+                    <span class="slider-nav-meta">{{ tutorial.length | safe }}</span>
+                    <span class="play-go">Go to it!</span>
+                </div>
+            </div>
+            {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock content %}

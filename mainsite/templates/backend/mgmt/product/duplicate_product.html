@@ -1,0 +1,315 @@
+{% extends 'backend/bases/mgmt.html' %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-12">
+    {% if success %}
+    <div class="alert alert-success">
+      <p>{{ success }}</p>
+    </div>
+    {% endif %}
+
+    {% if error %}
+    <div class="alert alert-danger">
+      <p>{{ error }}</p>
+    </div>
+    {% endif %}
+
+    <h2>Duplicate Market Product</h2>
+    <a href="/mgmt/market/product/preview/{{ product.id }}/" class="btn btn-warning">Preview</a>
+
+    <hr>
+
+    <form method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+
+      <div class="row">
+        <div class="col-md-6 col-sm-12">
+          <div class="form-group">
+            <label for="product-title">Name</label>
+            <input id="product-title" type="text" class="form-control" name="title" required="true" value="{{ product.title }}">
+          </div>
+    
+          <div class="form-group">
+            <label for="product-description">Description</label>
+            <textarea name="description" id="product-description" rows="10" class="form-control">{{ product.description }}</textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="product-price">Price</label>
+            <div class="input-group">
+              <span class="input-group-addon">$</span>
+              <input id="product-price" type="text" class="form-control" name="price" required="true" value="{{ product.price }}">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="product-category" class="form-label">Category</label>
+            <select name="category" class="form-control" id="product-category">
+            {% for option in categories %}
+               <option value="{{ option.id }}" {% if option.id == product.category_id %} selected="selected"{% endif %}>{{ option.get_name }}</option>
+            {% endfor %}
+            </select>
+          </div>
+    
+          <div class="form-group">
+            <label for="product-image">Image</label>
+            <input type="file" name="image" id="product-image" class="form-control-file">
+          </div>
+
+          {% if product.image %}
+          <img src="{{ product.image.url }}" alt="" class="rounded img-thumbnail" style="margin-bottom: 20px;">
+          {% endif %}
+
+          <input type="hidden" id="attributes" name="attributes" value="{{ product.attributes }}">
+        </div>
+
+        <div class="col-md-6 col-sm-12">
+          <div class="form-group">
+            <label for="product-introduction-title">Introduction title</label>
+            <input id="product-introduction-title" type="text" class="form-control" name="pi_title" required="true" value="{{ product.pi_title }}">
+          </div>
+    
+          <div class="form-group">
+            <label for="product-introduction-description">Introduction description</label>
+            <textarea name="pi_description" id="product-introduction-description" rows="10" class="form-control">{{ product.pi_description }}</textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="product-quantity">Quantity</label>
+            <input id="product-quantity" type="text" class="form-control" name="put_quantity" required="true" value="{{ product.put_quantity }}">
+          </div>
+
+          <div class="form-group">
+            <label for="product-status" class="form-label">Status</label>
+            <select name="status" class="form-control" id="product-status">
+            {% for option in status %}
+               <option value="{{ option.0 }}" {% if option.0 == product.status %} selected="selected"{% endif %}>{{ option.1 }}</option>
+            {% endfor %}
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="product-limit-status" class="form-label">Limit Status</label>
+            <select name="is_limit" class="form-control" id="product-limit-status">
+            {% for option in status %}
+               <option value="{{ option.0 }}" {% if option.0 == product.is_limit %} selected="selected"{% endif %}>{{ option.1 }}</option>
+            {% endfor %}
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="product-limit-quantity">Limit Quantity</label>
+            <input id="product-limit-quantity" type="text" class="form-control" name="limit_quantity" value="{{ product.limit_quantity }}">
+          </div>
+        </div>
+
+        <div class="col-sm-12">
+          <div class="form-group">
+            <label for="product-image">Attributes</label>
+            <button id="add-attribute" class="btn btn-success pull-right">Add Attribute</button>
+          </div>
+          <hr style="margin: 1px;"/>
+          
+          <div class="form-group row">
+            <div class="col-sm-6">
+              <input id="product-attr-name" type="text" class="form-control" placeholder="Attribute Name">
+            </div>
+            <div class="col-sm-6">
+              <input id="product-attr-value" type="text" class="form-control" placeholder="Attribute Value">
+            </div>
+          </div>
+
+          <table id="attributes-wrapper" class="table table-small">
+            <thead>
+              <tr>
+                <th scope="col">Attribute Name</th>
+                <th scope="col">Attribute Value</th>
+                <th scope="col"></th>
+              </tr>
+            </thead>
+            <tbody>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <hr>
+
+      <button class="btn btn-success" id="update-product-btn">Duplicate product</button>
+      <a href="/mgmt/market/products/" class="btn btn-primary pull-right">All products</a>
+    </form>
+  </div>
+</div>
+
+
+<!-- Modal -->
+<div id="editAttrModal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Modal Header</h4>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label for="attr-name">Attribute Name	:</label>
+          <input type="text" class="form-control" id="attr-name" placeholder="Enter Attribute Name" name="email">
+        </div>
+        <div class="form-group">
+          <label for="attr-value">Attribute Value :</label>
+          <input type="text" class="form-control" id="attr-value" placeholder="Enter Attribute Value" name="pwd">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-success" id="attr-update-btn">Update</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  updateAttrList()
+  
+  document.querySelector("#add-attribute").onclick = (e) => {
+    e.preventDefault()
+
+    let element = document.querySelector("#attributes")
+    let attributes = JSON.parse(element.value || "{}")
+
+    let name = document.querySelector("#product-attr-name").value
+    let value = document.querySelector("#product-attr-value").value
+
+    attributes[name] = value
+    element.value = JSON.stringify(attributes)
+
+    document.querySelector("#product-attr-name").value = ''
+    document.querySelector("#product-attr-value").value = ''
+
+    // insert new attribute in the view
+    updateAttrList()
+  };
+
+  
+
+  $("#attr-update-btn").click(function(){
+    var oldKey = $("#attr-name").data('oldkey');
+    var key = $("#attr-name").val();
+    var value = $("#attr-value").val();
+    let element = document.querySelector("#attributes");
+    let attributes = JSON.parse(element.value || "{}");
+    var index = getIndex(attributes, oldKey);
+    console.log(index, oldKey)
+    console.log(attributes)
+    var updateAttr = null;
+    if(key != oldKey) {
+      updateAttr = addToObject(attributes, key, value, index);
+      delete(updateAttr[oldKey]);
+    } else {
+      attributes[key] = value;
+      updateAttr = attributes
+    }
+    console.log('update', updateAttr)
+    //attributes[key] = value;
+    element.value = JSON.stringify(updateAttr);
+
+    updateAttrList();
+    $("#editAttrModal").modal("hide");
+    $("#update-product-btn").click();
+  });
+
+  function updateAttrList() {
+    let attributes = JSON.parse(document.querySelector("#attributes").value || "{}");
+    let container = document.querySelector("#attributes-wrapper");
+
+    let content = Object.entries(attributes).map(([key, value]) => {
+      return `<tr>
+          <td><b>${key}</b></td>
+          <td>${value}</td>
+          <td class="text-right">
+            <button type="button" class="btn btn-info btn-sm attr-edit-btn" data-toggle="modal" data-key="${key}" data-value="${value}" data-target="#editAttrModal">Edit</button>
+            <input type="button" onclick="removeAttr(event)" value="Remove" data-key="${key}" class="btn btn-danger btn-sm">
+          </td>
+      </tr>`
+    });
+
+    container.tBodies[0].innerHTML = content.join('\n');
+
+    $(".attr-edit-btn").click(function(){
+      var key = $(this).data("key");
+      var value = $(this).data("value");
+      console.log(key, value)
+      $("#attr-name").val(key);
+      $("#attr-name").attr('data-oldkey', key);
+      $("#attr-value").val(value);
+    });
+  }
+
+  function removeAttr(e) {
+    e.preventDefault();
+    
+    if (confirm("Are you sure you want to remove this item?")) {
+      let key = e.target.dataset['key'];
+      let element = document.querySelector("#attributes");
+      let attributes = JSON.parse(element.value || "{}");
+      
+      delete(attributes[key]);
+      element.value = JSON.stringify(attributes)
+
+      updateAttrList();
+      $("#update-product-btn").click();
+    }
+  }
+
+  var addToObject = function (obj, key, value, index) {
+
+    // Create a temp object and index variable
+    var temp = {};
+    var i = 0;
+  
+    // Loop through the original object
+    for (var prop in obj) {
+      if (obj.hasOwnProperty(prop)) {
+  
+        // If the indexes match, add the new item
+        if (i === index && key && value) {
+          temp[key] = value;
+        }
+  
+        // Add the current item in the loop to the temp obj
+        temp[prop] = obj[prop];
+  
+        // Increase the count
+        i++;
+  
+      }
+    }
+  
+    // If no index, add to the end
+    if (!index && key && value) {
+      temp[key] = value;
+    }
+  
+    return temp;
+  
+  };
+
+  var getIndex = function (obj, key) {
+    var i = 0;
+    for (var prop in obj) {
+      if (obj.hasOwnProperty(prop)) {
+        if (prop === key) {
+          return i;
+        }
+        i++;
+      }
+    }
+  };
+
+
+</script>
+{% endblock content %}

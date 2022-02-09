@@ -1,0 +1,248 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no"
+      name="viewport"
+    />
+    <title>Space Misfits</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
+    <!-- Template CSS -->
+    <link
+      rel="stylesheet"
+      href="{% static 'dashboard/assets/css/style.min.css' %}"
+    />
+    <link
+      rel="stylesheet"
+      href="{% static 'dashboard/assets/css/custom.css' %}"
+    />
+    <link rel="shortcut icon" type="image/png" href="{% static 'public/assets/favicon.ico' %}"/>
+    <script src="{% static 'public/js/jquery-3.2.1.min.js' %}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.nicescroll/3.7.0/jquery.nicescroll.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+    <script src="{% static 'js/user.js' %}"></script>
+    <script src="{% static 'public/js/@metamask/onboarding/dist/metamask-onboarding.bundle.js' %}"></script>
+  </head>
+  <body class="layout-4">
+    <div id="app">
+      <div class="main-wrapper main-wrapper-1">
+        <div class="navbar-bg"></div> 
+        <!-- Start app top navbar -->
+        <nav class="navbar navbar-expand-lg main-navbar pl-0">
+          <form class="form-inline mr-auto">
+            <ul class="navbar-nav mr-3">
+              <li>
+                <a href="#" data-toggle="sidebar" class="nav-link nav-link-lg pl-0">
+                  <img src="{% static 'dashboard/assets/img/toggle_menu.png' %}">
+                </a>
+              </li>
+            </ul>
+            <div class="Breadcrumb_element">
+              <nav>
+                <ol class="breadcrumb mb-0">
+                  <li class="desktop-logo"><a href="#"><img src="{% static 'dashboard/assets/img/logo.png' %}"></a></li>
+                  <li class="mobile-logo"><a href="#"><img src="{% static 'dashboard/assets/img/f_icon.png' %}"></a></li>
+
+                  {% if active_menu == "settings" %}
+                  <li class="active">
+                  {% else %}
+                  <li>
+                  {% endif %}
+                    <a href="/user/">Settings</a>
+                  </li>
+
+                  {% if active_menu == "items" %}
+                  <li class="active">
+                  {% else %}
+                  <li>
+                  {% endif %}
+                    <a href="/user/items/">Items &amp; Bits</a>
+                  </li>
+
+                  {% if active_menu == "assets" %}
+                  <li class="active">
+                  {% else %}
+                  <li>
+                  {% endif %}
+                    <a href="/user/tokens/">Assets</a>
+                  </li>
+
+                  {% if active_menu == "trading" %}
+                  <li class="active">
+                  {% else %}
+                  <li>
+                  {% endif %}
+                    <a href="/user/trading/">Trading</a>
+                  </li>
+
+                  {% if active_menu == "market" %}
+                  <li class="active">
+                  {% else %}
+                  <li>
+                  {% endif %}
+                    <a href="/user/market/">Market</a>
+                  </li>
+
+                  {% if active_menu == "transaction" %}
+                  <li class="active">
+                  {% else %}
+                  <li>
+                  {% endif %}
+                    <a href="/user/transactions/queue/">Transaction Queue</a>
+                  </li>
+
+                  {% if active_menu == "crown" %}
+                  <li class="active">
+                  {% else %}
+                  <li>
+                  {% endif %}
+                    <a href="/user/crown/">Wallet</a>
+                  </li>
+                </ol>
+              </nav>
+            </div>
+          </form>
+          <ul class="navbar-nav navbar-right">
+            {% if request.session.name %}
+            <li class="header-notification-toggle">
+              <button id="notification_button" class="btn btn-primary" onclick="notif_ws.ask_permission(this)"></button>
+            </li>
+            <li class="dropdown"><!--  dropdown-toggle -->
+              <a href="#" class="nav-link  nav-link-lg nav-link-user dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                <img alt="image" src="{% static 'dashboard/assets/img/avatar.png' %}" class="rounded-circle mr-1">
+                <div class="d-sm-none d-lg-inline-block">{{ request.session.name }}</div>
+              </a>
+              <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                <li><button class="dropdown-item has-icon" form="signout-form"><i class="fa fa-sign-out-alt"></i> Sign out</button></li>
+              </ul>
+            </li>
+            {% else %}
+            <li class="nav-item">
+              <a href="/signin/" class="nav-link">Sign in</a>
+            </li>
+            {% endif %}
+          </ul>
+        </nav>
+
+        <div class="separate-line">
+        </div>
+
+        <!-- Start main left sidebar menu -->
+        <div class="main-sidebar sidebar-style-3 m-0">
+          <aside id="sidebar-wrapper">
+            <div class="sidebar-brand">
+              <a href="#"><img src="{% static 'dashboard/assets/img/logo.png' %}"></a>
+            </div>
+            <div class="sidebar-brand sidebar-brand-sm">
+              <a href="#"><img src="{% static 'dashboard/assets/img/f_icon.png' %}"></a>
+            </div>
+            <ul class="sidebar-menu">
+              {% if active_menu == "settings" %}
+              <li class="dropdown active">
+              {% else %}
+              <li class="dropdown ">
+              {% endif %}
+                <a href="/user/" class="nav-link has-angle"><i class="fa fa-cog"></i><span>Setting</span></a>
+              </li>
+
+              {% if active_menu == "items" %}
+              <li class="dropdown active">
+              {% else %}
+              <li class="dropdown ">
+              {% endif %}
+                <a href="/user/items/" class="nav-link "><i class="fa fa-list" aria-hidden="true"></i><span>Items &amp; Bits</span></a>
+              </li>
+
+              {% if active_menu == "assets" %}
+              <li class="dropdown active">
+              {% else %}
+              <li class="dropdown ">
+              {% endif %}
+                <a href="/user/tokens/" class="nav-link "><i class="fa fa-th-large" aria-hidden="true"></i></i><span>Assets</span></a>
+              </li>
+
+              {% if active_menu == "trading" %}
+              <li class="dropdown active">
+              {% else %}
+              <li class="dropdown ">
+              {% endif %}
+                <a href="/user/trading/" class="nav-link "><i class="fa fa-bar-chart" aria-hidden="true"></i></i><span>Trading</span></a>
+              </li>
+
+              {% if active_menu == "market" %}
+              <li class="dropdown active">
+              {% else %}
+              <li class="dropdown ">
+              {% endif %}
+                <a href="/user/market/" class="nav-link "><i class="fa fa-bullhorn" aria-hidden="true"></i></i><span>Market</span></a>
+              </li>
+
+              {% if active_menu == "transaction" %}
+              <li class="dropdown active">
+              {% else %}
+              <li class="dropdown ">
+              {% endif %}
+                <a href="/user/transactions/queue/" class="nav-link "><i class="fa fa-exchange" aria-hidden="true"></i><span>Transaction Queue</span></a>
+              </li>
+
+              {% if active_menu == "crown" %}
+              <li class="dropdown active">
+              {% else %}
+              <li class="dropdown ">
+              {% endif %}
+                <a href="/user/crown/" class="nav-link "><i class="fa fa-exchange" aria-hidden="true"></i><span>Wallet</span></a>
+              </li>
+            </ul>
+          </aside>
+        </div>
+
+        {% block content %}{% endblock content %}
+      </div>
+    </div>
+
+    <form
+      action="/signout/"
+      id="signout-form"
+      method="post"
+      style="display: none"
+    >
+      {% csrf_token %}
+    </form>
+    <script>
+      const notif_ws = new NotificationWS(
+        'wss://{{request.session.notif_url}}/user/{{request.session.secret_key}}/'
+      );
+
+      document.addEventListener('DOMContentLoaded', () => {
+        // enable popovers
+        var popoverTriggerList = [].slice.call(
+          document.querySelectorAll('[data-bs-toggle="popover"]')
+        );
+        var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
+          return new bootstrap.Popover(popoverTriggerEl);
+        });
+      });
+    </script>
+    <script src="{% static 'dashboard/js/scripts.js' %}"></script>
+    <script type="text/javascript">
+      jQuery('.main-sidebar .sidebar-menu li').click(function () {
+        // If the clicked element has the active class, remove the active class from EVERY .nav-link>.state element
+        if (jQuery(this).hasClass('active')) {
+          jQuery('.main-sidebar .sidebar-menu li').removeClass('active');
+        }
+        // Else, the element doesn't have the active class, so we remove it from every element before applying it to the element that was clicked
+        else {
+          jQuery('.main-sidebar .sidebar-menu li').removeClass('active');
+          jQuery(this).addClass('active');
+        }
+      });
+    </script>
+  </body>
+</html>

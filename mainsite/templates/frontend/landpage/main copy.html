@@ -1,0 +1,364 @@
+{% extends "frontend/bases/main.html" %}
+{% load static %}
+{% load markdown_extras %}
+
+
+{% block content %}
+<section class="hero-section" style="background-image: url('{% static 'public/assets/hero_bg.jpg' %}');">
+
+    <video muted autoplay loop class="hero-video">
+        <source data-src="{% static 'public/assets/Space Misfits Trailer NO TEXT.mov' %}" src="" type="video/mp4">
+      Your browser does not support the video tag.
+      </video>
+
+    <div class="hero-wrap">
+        <img src="{% static 'public/assets/hero_logo.svg' %}" alt="">
+        <p>Available on PC</p>
+        <div class="btn-group">
+            <a href="/download/" class="btn btn-color"><span>Download</span></a>
+            <a href="/shop/" class="btn"><span>Shop now</span></a>
+        </div>
+    </div>
+
+    <div class="video-controls">
+        <span class="play-video">Play</span>
+        <span class="pause-video">Pause</span>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container-wrap">
+        <div class="section-content">
+            <h3>An Exciting Play to Earn Space Action MMO</h3>
+            <p class="section-description">Space Misfits brings an exciting and intense action space game to the blockchain. Explore new worlds, battle it out for scarce resources, build your fleet and earn a fortune in space.</p>
+            <img src="{% static 'public/assets/player.svg' %}" alt="">
+        </div>
+    </div>
+    <div class="section-image">
+        <img src="{% static 'public/assets/SpaceMisfits-BackgroundCenteredPlanet-it02.jpeg' %}" alt="">
+    </div>
+</section>
+
+<section class="features">
+    <div class="features-wrap">
+        <!-- features item -->
+        <div class="features-item" style="background-image: url('{% static 'public/assets/fight.jpg' %}');">
+            <h4>{{ content.fight_title | safe }}</h4>
+            <p>{{ content.fight_description | safe }}</p>
+        </div>
+
+        <!-- features item -->
+        <div class="features-item" style="background-image: url('{% static 'public/assets/explore.jpg' %}');">
+            <h4>{{ content.explore_title | safe }}</h4>
+            <p>{{ content.explore_description | safe }}</p>
+        </div>
+
+        <!-- features item -->
+        <div class="features-item" style="background-image: url('{% static 'public/assets/build.png' %}');">
+            <h4>{{ content.build_title | safe }}</h4>
+            <p>{{ content.build_description | safe }}</p>
+        </div>
+
+        <!-- features item -->
+        <div class="features-item" style="background-image: url('{% static 'public/assets/trade.jpg' %}');">
+            <h4>{{ content.trade_title | safe }}</h4>
+            <p>{{ content.trade_description | safe }}</p>
+        </div>
+    </div>
+</section>
+
+<section class="section video-section">
+    <div class="video-section-bg" style="background-image: url('{% static 'public/assets/video-bg.png' %}');"></div>
+    <div class="section-content">
+        <h2><mark>Space misfits</mark> video</h2>
+        <p class="section-description">Check out videos from SpaceMisfits content creators where they share their stories and secrets. From epic moments to tips & tricks, learn from community members so you can play like the best and be better than the rest.</p>
+    </div>
+    <div class="video-post">
+        <div class="video-post-img">
+            <video loop class="story-video" poster="{% static 'public/assets/homepage-video-preview.png' %}">
+                <source src="{% static 'public/assets/Space Misfits Trailer TEXT BOX.mov' %}" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+            <div class="video-content">
+                <div class="video-controls">
+                    <span class="play-video"></span>
+                    <span class="pause-video"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section section-faq" id="faq" style="background-image: url('{% static 'public/assets/faq-bg.jpg' %}');">
+    <div class="section-faq-wrap">
+        <h2>{{ content.faq_title | safe }}</h2>
+        <p class="section-description">{{ content.faq_description | safe }}</p>
+
+        <div class="faq">
+            {% for title, description in content.faq_json.items %}
+            <!-- faq item start-->
+            <div class="faq-item">
+                <div class="faq-item-head">{{ title | safe }}</div>
+                <div class="faq-body">{{ description | markdown | safe }}</div>
+            </div>
+            <!-- faq item end-->
+            {% endfor %}
+        </div>
+
+    </div>
+</section>
+
+<section class="section section-blog" id="news">
+    <div class="section-blog-wrap">
+        <h2>{{ content.news_title | safe }}</h2>
+        <p class="section-description">{{ content.news_description | safe }}</p>
+
+        {% if posts %}
+        <div class="blog">
+        {% for post in posts %}
+        {% if post.preview %}
+            <!-- article start -->
+            <article>
+                <div class="blog-post-image" style="background-image: url('{{ post.preview.url }}')"></div>
+                <div class="blog-post-content">
+                    <h3 class="truncate-1">{{ post.title | safe }}</h3>
+                    <div class="blog-short-content-section">
+                        <div class="blog-short-content">
+                            <span>{{ post.content | markdown | safe }}</span>
+                        </div>
+                        <div>
+                            <p> ...</p>
+                        </div>
+                    </div>
+                    <div class="blog-post-meta">
+                        <span>{{ post.created_at | date }}</span>
+                    </div>
+                    <!-- Read More -->
+                    <div class="blog-read-more">
+                        <a href="/news/{{ post.slug }}/" class="btn btn-color"><span>Read More</span></a>
+                    </div>
+                </div>
+            </article>
+            <!-- article end -->
+        {% endif %}
+        {% endfor %}
+        </div>
+        {% endif %}
+
+        <div class="blog-btn">
+            <a href="/news/" class="btn"><span>See more</span></a>
+        </div>
+    </div>
+</section>
+
+<section class="section section-community" id="community" style="background-image: url('{% static 'public/assets/comunity.jpg' %}')">
+    <div class="section-community-wrap">
+        <h2><mark>Join</mark> our community</h2>
+        <p class="section-description">{{ content.join_description | safe }}</p>
+        <div class="community-links">
+            <a href="{{ content.telegram_link }}" class="telegram" target="_blank">Telegram</a>
+            <a href="{{ content.discord_link }}" class="discort" target="_blank">Discord</a>
+        </div>
+    </div>
+</section>
+
+<!-- - ->
+<section class="section section-shop" id="shop" style="background-image: url('{% static 'public/assets/bg-9.jpg' %}')">
+    <div class="section-shop-wrap">
+        <h2>lorem ipsum  </h2>
+        <p class="section-description">Lorem ipsum dolor sit amet,  labore et dolore magna aliqua.</p>
+
+        <div class="shop">
+            <div class="shop-filter">
+                <div class="shop-filter-wrap">
+                    <h4>Filter</h4>
+                    <ul class="filter-list">
+                        <li class="filter-list-item">
+                            <input type="checkbox" id="uncategorized">
+                            <label for="uncategorized">Uncategorized<span>(0)</span></label>
+                        </li>
+                        <li class="filter-list-item">
+                            <input type="checkbox" id="avatars">
+                            <label for="avatars">Avatars<span>(3)</span></label>
+                        </li>
+                        <li class="filter-list-item">
+                            <input type="checkbox" id="ships">
+                            <label for="ships">Ships<span>(21)</span></label>
+                        </li>
+                        <li class="filter-list-item">
+                            <input type="checkbox" id="turrets">
+                            <label for="turrets">Turrets<span>(24)</span></label>
+                        </li>
+                        <li class="filter-list-item">
+                            <input type="checkbox" id="ownership-tokens">
+                            <label for="ownership-tokens">Ownership Tokens<span>(1)</span></label>
+                        </li>
+                        <li class="filter-list-item">
+                            <input type="checkbox" id="starter-packages">
+                            <label for="starter-packages">Starter Packages<span>(1)</span></label>
+                        </li>
+                        <li class="filter-list-item">
+                            <input type="checkbox" id="new-items">
+                            <label for="new-items">New Items<span>(1)</span></label>
+                        </li>
+                        <li class="filter-list-item">
+                            <input type="checkbox" id="modules">
+                            <label for="modules">Modules<span>(1)</span></label>
+                        </li>
+                        <li class="filter-list-item">
+                            <input type="checkbox" id="mining-turrets">
+                            <label for="mining-turrets">Mining Turrets<span>(4)</span></label>
+                        </li>
+                        <li class="filter-list-item">
+                            <input type="checkbox" id="launchers">
+                            <label for="launchers">Launchers<span>(6)</span></label>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="shop-content">
+                <div class="shop-sorting-panel">
+                    <select class="shop-sorting">
+                        <option value="default" selected >Default sorting</option>
+                        <option value="popularity">Sort by popularity</option>
+                        <option value="date">Sort by latest</option>
+                        <option value="price">Sort by price: low to high</option>
+                        <option value="price-desc">Sort by price: high to low</option>
+                    </select>
+                </div>
+
+                <div class="shop-products">
+
+                    <!-- Products item start - ->
+                    <div class="products-item">
+                        <div class="products-item-image">
+                            <img src="{% static 'public/assets/mourning.jpg' %}" alt="product name">
+                            <a href="#" class="btn btn-color"><span>Add to cart</span></a>
+                        </div>
+                        <h3 class="products-item-title">Mourning</h3>
+                        <p class="products-item-price">$49.00</p>
+                        <div class="products-item-meta">
+                            <span>Turrets</span>
+                            <span>Avatars</span>
+                        </div>
+                    </div>
+                    <!-- Products item end - ->
+
+                    <!-- Products item start - ->
+                    <div class="products-item">
+                        <div class="products-item-image">
+                            <img src="{% static 'public/assets/neck-breaker.jpg' %}" alt="product name">
+                            <a href="#" class="btn btn-color"><span>Add to cart</span></a>
+                        </div>
+                        <h3 class="products-item-title">Mourning</h3>
+                        <p class="products-item-price">$49.00</p>
+                        <div class="products-item-meta">
+                            <span>Turrets</span>
+                            <span>Avatars</span>
+                        </div>
+                    </div>
+                    <!-- Products item end - ->
+
+                    <!-- Products item start - ->
+                    <div class="products-item">
+                        <div class="products-item-image">
+                            <img src="{% static 'public/assets/mourning.jpg' %}" alt="product name">
+                            <a href="#" class="btn btn-color"><span>Add to cart</span></a>
+                        </div>
+                        <h3 class="products-item-title">Mourning</h3>
+                        <p class="products-item-price">$49.00</p>
+                        <div class="products-item-meta">
+                            <span>Turrets</span>
+                            <span>Avatars</span>
+                        </div>
+                    </div>
+                    <!-- Products item end - ->
+
+                    <!-- Products item start - ->
+                    <div class="products-item">
+                        <div class="products-item-image">
+                            <img src="{% static 'public/assets/neck-breaker.jpg' %}" alt="product name">
+                            <a href="#" class="btn btn-color"><span>Add to cart</span></a>
+                        </div>
+                        <h3 class="products-item-title">Mourning</h3>
+                        <p class="products-item-price">$49.00</p>
+                        <div class="products-item-meta">
+                            <span>Turrets</span>
+                            <span>Avatars</span>
+                        </div>
+                    </div>
+                    <!-- Products item end - ->
+
+                    <!-- Products item start - ->
+                    <div class="products-item">
+                        <div class="products-item-image">
+                            <img src="{% static 'public/assets/mourning.jpg' %}" alt="product name">
+                            <a href="#" class="btn btn-color"><span>Add to cart</span></a>
+                        </div>
+                        <h3 class="products-item-title">Mourning</h3>
+                        <p class="products-item-price">$49.00</p>
+                        <div class="products-item-meta">
+                            <span>Turrets</span>
+                            <span>Avatars</span>
+                        </div>
+                    </div>
+                    <!-- Products item end - ->
+
+                    <!-- Products item start - ->
+                    <div class="products-item">
+                        <div class="products-item-image">
+                            <img src="{% static 'public/assets/neck-breaker.jpg' %}" alt="product name">
+                            <a href="#" class="btn btn-color"><span>Add to cart</span></a>
+                        </div>
+                        <h3 class="products-item-title">Mourning</h3>
+                        <p class="products-item-price">$49.00</p>
+                        <div class="products-item-meta">
+                            <span>Turrets</span>
+                            <span>Avatars</span>
+                        </div>
+                    </div>
+                    <!-- Products item end - ->
+
+                    <!-- Products item start - ->
+                    <div class="products-item">
+                        <div class="products-item-image">
+                            <img src="{% static 'public/assets/mourning.jpg' %}" alt="product name">
+                            <a href="#" class="btn btn-color"><span>Add to cart</span></a>
+                        </div>
+                        <h3 class="products-item-title">Mourning</h3>
+                        <p class="products-item-price">$49.00</p>
+                        <div class="products-item-meta">
+                            <span>Turrets</span>
+                            <span>Avatars</span>
+                        </div>
+                    </div>
+                    <!-- Products item end - ->
+
+                    <!-- Products item start - ->
+                    <div class="products-item">
+                        <div class="products-item-image">
+                            <img src="{% static 'public/assets/neck-breaker.jpg' %}" alt="product name">
+                            <a href="#" class="btn btn-color"><span>Add to cart</span></a>
+                        </div>
+                        <h3 class="products-item-title">Mourning</h3>
+                        <p class="products-item-price">$49.00</p>
+                        <div class="products-item-meta">
+                            <span>Turrets</span>
+                            <span>Avatars</span>
+                        </div>
+                    </div>
+                    <!-- Products item end - ->
+
+                </div>
+
+                <div class="blog-btn">
+                    <a href="/shop/" class="btn" id="show-more-products"><span>See more</span></a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>
+<!-- -->
+{% endblock content %}

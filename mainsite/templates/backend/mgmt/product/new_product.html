@@ -1,0 +1,182 @@
+{% extends 'backend/bases/mgmt.html' %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-12">
+    {% if error %}
+    <div class="alert alert-danger">
+      <p>{{ error }}</p>
+    </div>
+    {% endif %}
+
+    <h2>Add new Market Product</h2>
+
+    <form method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      <div class="row">
+        <div class="col-md-6 col-sm-12">
+          <div class="form-group">
+            <label for="product-title">Name</label>
+            <input id="product-title" type="text" class="form-control" name="title" required="true">
+          </div>
+    
+          <div class="form-group">
+            <label for="product-description">Description</label>
+            <textarea name="description" id="product-description" rows="10" class="form-control"></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="product-price">Price</label>
+            <div class="input-group">
+              <span class="input-group-addon">$</span>
+              <input id="product-price" type="text" class="form-control" name="price" required="true">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="product-category" class="form-label">Category</label>
+            <select name="category" class="form-control" id="product-category">
+            {% for option in categories %}
+               <option value="{{ option.id }}">{{ option.get_name }}</option>
+            {% endfor %}
+            </select>
+          </div>
+    
+          <div class="form-group">
+            <label for="product-image">Image</label>
+            <input type="file" name="image" id="product-image" class="form-control-file">
+          </div>
+        </div>
+
+        <div class="col-md-6 col-sm-12">
+          <div class="form-group">
+            <label for="product-introduction-title">Introduction title</label>
+            <input id="product-introduction-title" type="text" class="form-control" name="pi_title" required="true">
+          </div>
+    
+          <div class="form-group">
+            <label for="product-introduction-description">Introduction description</label>
+            <textarea name="pi_description" id="product-introduction-description" rows="10" class="form-control"></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="product-quantity">Quantity</label>
+            <input id="product-quantity" type="text" class="form-control" name="put_quantity" required="true">
+          </div>
+
+          <div class="form-group">
+            <label for="product-status" class="form-label">Status</label>
+            <select name="status" class="form-control" id="product-status">
+            {% for option in status %}
+               <option value="{{ option.0 }}">{{ option.1 }}</option>
+            {% endfor %}
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="product-limit-status" class="form-label">Limit Status</label>
+            <select name="is_limit" class="form-control" id="product-limit-status">
+            {% for option in status %}
+               <option value="{{ option.0 }}">{{ option.1 }}</option>
+            {% endfor %}
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="product-limit-quantity">Limit Quantity</label>
+            <input id="product-limit-quantity" type="text" class="form-control" name="limit_quantity" required="true">
+          </div>
+        </div>
+
+        <div class="col-sm-12">
+          <input type="hidden" id="attributes" name="attributes" value="">
+            
+          <div class="form-group">
+            <label for="product-image">Attributes</label>
+            <button id="add-attribute" class="btn btn-success pull-right">Add Attribute</button>
+          </div>
+          <hr style="margin: 1px;"/>
+          
+          <div class="form-group row">
+            <div class="col-sm-6">
+              <input id="product-attr-name" type="text" class="form-control" placeholder="Attribute Name">
+            </div>
+            <div class="col-sm-6">
+              <input id="product-attr-value" type="text" class="form-control" placeholder="Attribute Value">
+            </div>
+          </div>
+  
+          <table id="attributes-wrapper" class="table table-small">
+            <thead>
+              <tr>
+                <th scope="col">Attribute Name</th>
+                <th scope="col">Attribute Value</th>
+                <th scope="col"></th>
+              </tr>
+            </thead>
+            <tbody>
+              
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      
+      <hr>
+      <button class="btn btn-success">Create product</button>
+    </form>
+  </div>
+</div>
+<script>
+  document.querySelector("#add-attribute").onclick = (e) => {
+    e.preventDefault()
+
+    let element = document.querySelector("#attributes")
+    let attributes = JSON.parse(element.value || "{}")
+
+    let name = document.querySelector("#product-attr-name").value
+    let value = document.querySelector("#product-attr-value").value
+
+    attributes[name] = value
+    console.log(attributes)
+    element.value = JSON.stringify(attributes)
+
+    document.querySelector("#product-attr-name").value = ''
+    document.querySelector("#product-attr-value").value = ''
+
+    // insert new attribute in the view
+    updateAttrList()
+  };
+
+  function updateAttrList() {
+    let attributes = JSON.parse(document.querySelector("#attributes").value || "{}")
+    let container = document.querySelector("#attributes-wrapper")
+
+    let content = Object.entries(attributes).map(([key, value]) => {
+        return `<tr>
+            <td><b>${key}</b></td>
+            <td>${value}</td>
+            <td style="width: 10%;"><input type="button" onclick="removeAttr(event)" value="Remove" data-key="${key}" class="btn btn-danger"></td>
+        </tr>`
+    })
+
+    container.tBodies[0].innerHTML = content.join('\n')
+  }
+
+  function removeAttr(e) {
+    e.preventDefault()
+
+    if (confirm("Are you sure you want to remove this item?")) {
+        let key = e.target.dataset['key']
+        let element = document.querySelector("#attributes")
+        let attributes = JSON.parse(element.value || "{}")
+        
+        delete(attributes[key])
+        element.value = JSON.stringify(attributes)
+
+        updateAttrList()
+    }
+  }
+</script>
+{% endblock content %}
+

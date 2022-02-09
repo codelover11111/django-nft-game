@@ -1,0 +1,171 @@
+{% extends "frontend/bases/main.html" %}
+{% load static %}
+{% load markdown_extras %}
+
+
+{% block content %}
+
+<div class="main-content">
+    <div class="container">
+        <section class="single-product">
+            <div class="single-product-wrap">
+                <!-- Product image -->
+                <div class="single-product-image">
+                    <img src="{{ product.image.url }}" alt="">
+                </div>
+
+                <!-- Product info -->
+                <div class="single-product-info">
+                    <h2 class="product-title">{{ product.title }}</h2>
+                    <div class="product-price"><span>${{ product.price }}</span></div>
+                    <div class="product-description">
+                        <p>{{ product.description }}</p>
+                        <h3>Attributes:</h3>
+                        <table class="attr-table">
+                            {% if product.attributes %}
+                                {% for key, value in product.attributes_json.items %}
+                                    <tr>
+                                        <td style="width: 30%;">{{ key }}:</td>
+                                        <td style="vertical-align: middle;">
+                                            <div style="display: flex;flex-direction: row;height: 20px;">
+                                                <div style="
+                                                    height: 100%;
+                                                    width: {{value}}%;
+                                                    background: linear-gradient(to right, rgb(232 21 118), rgb(217 2 236));
+                                                    transform: skew(-20deg);
+                                                    border: outset 3px;
+                                                    border-color: #ff55cd #900281 #e208ae #ffa5eb;"></div>
+                                                <div style="
+                                                    height: 100%;
+                                                    flex-grow: 1;
+                                                    background: linear-gradient(to right, rgb(52 8 93), rgb(164 79 243));
+                                                    transform: skew(-20deg);
+                                                    border: outset 3px;
+                                                    border-color: #a85dec #690bc3 #7822c7 #a752f5;
+                                                "></div>
+                                            </div>
+                                            
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            {% endif %}
+                        </table>
+                        <h3>{{ product.pi_title }}</h3>
+                        <p>{{ product.pi_description }}</p>
+                        <!-- Product meta -->
+                        <div class="product-meta">
+                            <p><span>Categories: </span><a href="#">{{ product.category.name }}</a></p>
+                            <!-- <a href="#">Beam Laser</a> -->
+                        </div>
+                        <!-- Add to cart -->
+                        <div class="product-btton-group">
+                            <div class="number-input-group">
+                                <button type="button" class="number-btn inc">+</button>
+                                <input type="number" class="number-input product-quantity">
+                                <button type="button" class="number-btn dec">-</button>
+                            </div>
+                            
+                            <button class="btn btn-color add-cart-btn"><span>Add to cart</span></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function() {
+        $.ajaxSetup({
+            headers:
+            { 'X-CSRFToken': $('input[name="csrfmiddlewaretoken"]').val() }
+        });
+
+        $(".add-cart-btn").click(function() {
+            var productLimitCount = "{{ product.limit_quantity }}";
+            var productIsLimit = "{{ product.is_limit }}";
+            var addedProductCount = 0;
+            $.ajax({
+                url: '/api/getProductCountByCustomer/',
+                method: 'GET',
+                async: false,
+                headers: {
+                    "Content-Type": "application/json",
+                    'X-CSRFToken': $('input[name="csrfmiddlewaretoken"]').val()
+                },
+                data: { user_id: '{{ request.session.name }}', product_id: '{{ product.id }}' },
+                success: function (data) {
+                    addedProductCount = parseInt(data.count);
+                }
+            });
+
+            if(parseInt(productIsLimit) == 1 && parseInt(productLimitCount) <= addedProductCount) {
+                alert("You can only buy "+ productLimitCount +" quantities of this Item.")
+                return;
+            }
+            var out_quantity = parseInt("{{product.out_quantity }}")
+            var put_quantity = parseInt("{{product.put_quantity }}")
+            if((out_quantity == put_quantity) || (put_quantity == 0)) {
+                alert("SOLD OUT");
+                return false;
+            }
+            var productId = "{{ product.id }}";
+            var quantity = $(".product-quantity").val();
+            var exist = false;
+            var total_price = 0;
+            $(".cart-item-row").each(function(ind) {
+                var itemId = $(this).data('productId');
+                if(productId == itemId) exist = true;
+            })
+
+            $("#cart-badge").show().text(parseInt($("#cart-badge").text()) + parseInt(quantity));
+            if(exist) {
+                var el = $(".cart-body").find("[data-product-id='"+ productId +"']")
+                var old_quantity = $(el).find(".cart-item-product-quantity").text();
+                var total_quantity = parseInt(old_quantity) + parseInt(quantity);
+                $(el).find(".cart-item-product-quantity").text(total_quantity);
+                quantity = total_quantity;
+            } else {
+                var str = `
+                <div class="cart-item-row" data-product-id="{{ product.id }}">
+                    <div>
+                        <img src="{{ product.image.url }}">
+                        <span>{{ product.title }}</span>
+                    </div>
+                    <div>
+                        <span>$</span>
+                        <span class="cart-item-product-price">{{ product.price }}</span>
+                        <span> x </span>
+                        <span class="cart-item-product-quantity">${quantity}</span>
+                    </div>
+                </div>`;
+                $(".cart-body").append(str);
+            }
+
+            $(".cart-item-row").each(function(ind) {
+                var price = $(this).find('.cart-item-product-price').text();
+                var item_quantity = $(this).find('.cart-item-product-quantity').text();
+                total_price += parseFloat(price) * parseInt(item_quantity);
+            })
+
+            //console.log(quantity, total_price)
+            $.ajax({
+                url: '/shop/cartitems/add',
+                method: 'POST',
+                data: {
+                    'user_id': "{{ request.session.name }}",
+                    'product_id': "{{ product.id }}",
+                    'quantity': quantity,
+                    'total_price': isNaN(total_price) ? 0 : total_price,
+                    'price': "{{ product.price }}",
+                },
+                dataType: 'json',
+                success: function (data) {
+                    //console.log(data)
+                }
+            })
+        });
+    });
+</script>
+
+{% endblock content %}

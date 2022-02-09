@@ -1,0 +1,92 @@
+{% extends "backend/bases/user.html" %}
+
+{% block content %}
+<div class="row">
+  <div class="col-md-8 p-5">
+    <h3>Player info</h3>
+
+    <p class="lead">{{ player.nick_name }}</p>
+    {% if player.email %}
+    <p>{{ player.email }}
+      {% if email_confirmed %}
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-circle-fill text-success" viewBox="0 0 16 16"><path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/></svg>
+      {% else %}
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-exclamation-triangle-fill text-danger" viewBox="0 0 16 16"><path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/></svg>
+      {% endif %}
+    </p>
+    {% else %}
+    <p class="alert alert-danger">User doesn't have an email address</p>
+    {% endif %}
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-8 p-5">
+    <h5>Notification settings</h5>
+    <hr>
+    <p id="notification_status"></p>
+    <button id="notification_button" class="btn btn-primary" onclick="notif_ws.ask_permission(this)">Allow notifications</button>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-8 p-5">
+    <h5>Wallet address</h5>
+    <hr>
+  {% if player.wallet %}
+    {% if refresh_error %} <div class="alert alert-danger">{{ refresh_error }}</div> {% endif %}
+    <p class="lead">{{player.wallet}}</p>
+    <form id="refresh_wallet" action="/user/refresh/wallet/" method="post">
+      {% csrf_token %}
+      <button form="refresh_wallet" class="btn btn-primary">Refresh</button>
+    </form>
+  {% else %}
+    <p>You have not yet linked your wallet</p>
+  {% endif %}
+  </div>
+</div>
+
+
+<div class="row">
+  <div class="col-md-8 p-5">
+    <h5>Update your email address</h5>
+    <hr>
+    <form id="update_email" action="/user/update/email/" method="post">
+      {% if email_error %}
+      <div class="alert alert-danger">{{ email_error }}</div>
+      {% endif %}
+
+      {% csrf_token %}
+      <div class="form-group mb-2">
+        <input class="form-control" type="email" name="email" placeholder="Your new email" required>
+      </div>
+
+      <br>
+      <button form="update_email" class="btn btn-primary">Update email</button>
+    </form>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-8 p-5">
+    <h5>Update your password</h5>
+    <hr>
+    <form id="update_password" action="/user/update/password/" method="post">
+      {% if pass_error %}
+      <div class="alert alert-danger">{{ pass_error }}</div>
+      {% endif %}
+
+      {% csrf_token %}
+      <div class="form-group mb-1">
+        <input class="form-control" type="password" name="password" placeholder="New password" required>
+      </div>
+      <div class="form-group mb-2">
+        <input class="form-control" type="password" name="password_confirmation" placeholder="Confirm password" required>
+      </div>
+
+      <br>
+      <button form="update_password" class="btn btn-primary">Update password</button>
+    </form>
+  </div>
+</div>
+{% endblock content %}

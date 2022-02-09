@@ -1,0 +1,392 @@
+{% extends "backend/bases/layout.html" %}
+{% load static %}
+{% load misc %}
+
+{% block content %}
+
+<!-- Start app main Content -->
+<div class="main-content">
+    <div class="trading_list_outer"> 
+        <h2 class="section-title my-3">Trading <button class="dashboard-btn" form="cancel_trade"><span>Cancel</span></button></h2>
+        <div class="row">
+            <div class="col-12 col-md-6 col-lg-6">
+                <div class="my-offer-title">
+                    <p>My Offer</p>
+                </div>
+                <div class="my-offer-content">
+                    <div class="bits">
+                        <span><b id="my_bits" data-can_recycle="{{item.can_recycle}}" data-type="bits" data-amount="{{my_bundle.bits}}">{{my_bundle.bits|default:'0'}}</b></span>
+                        <span>BITS</span>
+                    </div>
+                    <div class="clear-btn">
+                        <button class="dashboard-btn" onclick="ts._flush_bits(this)">
+                            <span>Clear Bits</span>
+                        </button>
+                    </div>
+                </div>
+                <div id="my_bundle">
+                    {% for entry in my_bundle.item %}
+                        <div
+                            class="card"
+                            data-id="{{entry.id}}"
+                            data-can_recycle="{{entry.can_recycle}}"
+                            data-type="{{entry.type}}"
+                            data-name="{{entry.name}}"
+                            data-amount="{{entry.amount}}"
+                            data-image="{{entry.image}}"
+                            data-details="{{entry.details}}">
+
+                            <div class="medias" data-mkt-role="image">
+                                <img class="mr-3" src="{{entry.image}}">
+                                <div class="media-body">
+                                </div>
+                            </div>
+                            <div class="item_list_content">
+                                <div class="card-body-left">
+                                    <div class="item-number">
+                                        <div>
+                                            <p data-name="count">{{entry.amount}}</p>
+                                        </div>
+                                    </div>
+                                    <div class="item-detail">
+                                        <div>
+                                            <p class="align-middle"
+                                                data-mkt-role="name"
+                                            {% if entry.details and entry.details != "None" %}
+                                                data-bs-toggle="popover"
+                                                data-bs-trigger="hover"
+                                                data-bs-html="true"
+                                                data-bs-placement="top"
+                                                title="Unique traits"
+                                                data-bs-content="{{entry.details}}"
+                                            {% endif %}
+                                            >{{entry.name}}{% if entry.details and entry.details != "None" %} <small class="mark bg-warning text-black">info</small>{% endif %}</p>
+                                            <p>{% if entry.can_recycle %}Recyclable{% endif %}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card-body-right">
+                                    <div class="item-btn">
+                                        <button class="dashboard-btn" onclick="ts._remove(this)">
+                                            <span>Remove</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                    {% for entry in my_bundle.mineral %}
+                        <div
+                            class="card"
+                            data-id="{{entry.id}}"
+                            data-can_recycle="0"
+                            data-type="{{entry.type}}"
+                            data-name="{{entry.name}}"
+                            data-amount="{{entry.amount}}"
+                            data-image="{{entry.image}}"
+                            data-details="{{entry.details}}">
+
+                            <div class="medias" data-mkt-role="image">
+                                <img class="mr-3" src="{{entry.image}}">
+                                <div class="media-body">
+                                </div>
+                            </div>
+                            <div class="item_list_content">
+                                <div class="card-body-left">
+                                    <div class="item-number">
+                                        <div>
+                                            <p data-name="count">{{entry.amount}}</p>
+                                        </div>
+                                    </div>
+                                    <div class="item-detail">
+                                        <div>
+                                            <p class="align-middle" data-mkt-role="name">{{entry.name}}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card-body-right">
+                                    <div class="item-btn">
+                                        <button class="dashboard-btn" onclick="ts._remove(this)">
+                                            <span>Remove</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                    </div>
+                <div class="submit-offer">
+                    <button id="submit_button" class="dashboard-btn" onclick="ts._submit_offer(this)" {{i_submitted|set_disabled}}>
+                        <span>Submit Offer</span>
+                    </button>
+                </div>
+                <div class="inventory-bits">
+                    <div class="inventory-bits-content">
+                        <p>Inventory</p>
+                        <p>Bits: <b id="total_bits">{{bits}}</b></p>
+                    </div>
+                </div>
+                <div class="inventory-bits-form">
+                    <div class="inventory-bits-form-input">
+                        <span class="d-flex">
+                            <div>
+                                <input id="bits" class="form-control" type="number" step="1" max="{{bits}}" min="0" value="0" />
+                            </div>
+                        </span>
+                    </div>
+                    <div class="inventory-bits-form-btn">
+                        <span class="d-flex">
+                            <button class="dashboard-btn" id="submit_bits" onclick="ts._add_bits(this)">
+                                <span>Add Bits</span>
+                            </button>
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-6 col-lg-6 offer-section">
+                <div>
+                    <p class="name">{{they.nick_name}}'s offer <span id="peer_bundle_status" class="lead {{peer_submitted|set_invisible}}">(Submitted)</span></p>
+                    <div>
+                        <span><strong id="their_bits" data-can_recycle="{{item.can_recycle}}" data-type="bits" data-amount="{{their_bundle.bits}}">{{their_bundle.bits|default:'0'}}</strong></span>
+                        <span>BITS</span>
+                    </div>
+
+                    <div id="their_bundle">
+                    {% for entry in their_bundle.item %}
+                        <div
+                            class="card"
+                            data-id="{{entry.id}}"
+                            data-can_recycle="{{entry.can_recycle}}"
+                            data-type="{{entry.type}}"
+                            data-name="{{entry.name}}"
+                            data-details="{{entry.details}}">
+
+                            <div class="medias" data-mkt-role="image">
+                                <img class="mr-3" src="{{entry.image}}">
+                                <div class="media-body">
+                                </div>
+                            </div>
+                            <div class="item_list_content">
+                                <div class="card-body-left">
+                                    <div class="item-number">
+                                        <div>
+                                            <p data-name="count">{{entry.amount}}</p>
+                                        </div>
+                                    </div>
+                                    <div class="item-detail">
+                                        <div>
+                                            <p class="align-middle"
+                                                {% if entry.details and entry.details != "None" %}
+                                                    data-bs-toggle="popover"
+                                                    data-bs-trigger="hover"
+                                                    data-bs-html="true"
+                                                    data-bs-placement="top"
+                                                    title="Unique traits"
+                                                    data-bs-content="{{entry.details}}"
+                                                {% endif %}
+                                                >{{entry.name}}{% if entry.details and entry.details != "None" %} <small class="mark bg-warning text-black">info</small>{% endif %}</p>
+                                            <p>{% if entry.can_recycle %}Recyclable{% endif %}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- <div class="card-body-right">
+                                    <div class="item-btn">
+                                        <button class="dashboard-btn" onclick="ts._remove(this)">
+                                            <span>Remove</span>
+                                        </button>
+                                    </div>
+                                </div> -->
+                            </div>
+                        </div>
+                    {% endfor %}
+                    {% for entry in their_bundle.mineral %}
+                        <div
+                            class="card"
+                            data-id="{{entry.id}}"
+                            data-can_recycle="0"
+                            data-type="{{entry.type}}"
+                            data-name="{{entry.name}}">
+
+                            <div class="medias" data-mkt-role="image">
+                                <img class="mr-3" src="{{entry.image}}">
+                                <div class="media-body">
+                                </div>
+                            </div>
+                            <div class="item_list_content">
+                                <div class="card-body-left">
+                                    <div class="item-number">
+                                        <div>
+                                            <p data-name="count">{{entry.amount}}</p>
+                                        </div>
+                                    </div>
+                                    <div class="item-detail">
+                                        <div>
+                                            <p class="align-middle" data-mkt-role="name">{{entry.name}}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- <div class="card-body-right">
+                                    <div class="item-btn">
+                                        <button class="dashboard-btn" onclick="ts._remove(this)">
+                                            <span>Remove</span>
+                                        </button>
+                                    </div>
+                                </div> -->
+                            </div>
+                        </div>
+                    {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row trading_list_content">
+            <div class="col-12 col-md-6 col-lg-6" data-inventory_type="item">
+                <div class="item_list_title">
+                    <p>Items List</p>
+                </div>
+                {% for item in items %}
+                    {% if item.amount %}
+                    <div
+                        class="card"
+                        data-id="{{item.id}}"
+                        data-can_recycle="{{item.can_recycle}}"
+                        data-type="item"
+                        data-name="{{item.name}}"
+                        data-amount="{{item.amount}}"
+                        data-details="{{item.details}}"
+                        {% if item.image %}
+                        data-image="{{pve}}{{item.image}}">
+
+                        <div class="medias" data-mkt-role="image">
+                            <img class="mr-3" src="{{pve}}{{item.image}}">
+                            <div class="media-body">
+                            </div>
+                        </div>
+                        {% else %}
+                        data-image="https://via.placeholder.com/75?text=No+Image">
+                        <div class="medias" data-mkt-role="image">
+                            <img class="mr-3" src="https://via.placeholder.com/75?text=No+Image ">
+                            <div class="media-body">
+                            </div>
+                        </div>
+                        {% endif %}
+                        <div class="item_list_content">
+                            <div class="card-body-left">
+                                <div class="item-number">
+                                    <div>
+                                        <p data-name="count">{{item.amount}}</p>
+                                    </div>
+                                </div>
+                                <div class="item-detail">
+                                    <div>
+                                        <p
+                                        data-mkt-role="name"
+                                        {% if item.details %}
+                                              data-bs-toggle="popover"
+                                              data-bs-trigger="hover"
+                                              data-bs-html="true"
+                                              data-bs-placement="top"
+                                              title="Unique traits"
+                                              data-bs-content="{{item.details}}"
+                                        {% endif %}>{{item.name}}
+                                        {% if item.details %} <small class="mark bg-warning text-black">info</small>{% endif %}</p>
+                                        <p>{% if item.can_recycle %}Recyclable{% endif %}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-body-right">
+                                <div class="item-input">
+                                    <span class="d-flex">
+                                        <div>
+                                            <input type="number" class="form-control" value="0" max="{{item.amount}}" min="0" step="1" />
+                                        </div>
+                                    </span>
+                                </div>
+                                <div class="item-btn">
+                                    <button class="dashboard-btn" onclick="ts._add(this)">
+                                        <span>Add</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+            <div class="col-12 col-md-6 col-lg-6" data-inventory_type="mineral">
+                <div class="mineral_list_title">
+                    <p>Minerals List</p>
+                </div>
+                {% for mineral in minerals %}
+                    {% if mineral.amount %}
+                    <div
+                        class="card"
+                        data-id="{{mineral.id}}"
+                        data-can_recycle="0"
+                        data-type="mineral"
+                        data-name="{{mineral.name}}"
+                        data-amount="{{mineral.amount}}"
+                        data-perks="{{mineral.pack_data}}"
+                        {% if mineral.image %}
+                        data-image="{{pve}}{{mineral.image}}">
+                        <div class="medias" data-mkt-role="image">
+                            <img class="mr-3" src="{{pve}}{{mineral.image}}">
+                            <div class="media-body"></div>
+                        </div>
+                        {% else %}
+                        data-image="https://via.placeholder.com/75?text=No+Image">
+                        <div class="medias">
+                            <img class="mr-3" src="https://via.placeholder.com/75?text=No+Image">
+                            <div class="media-body">
+                            </div>
+                        </div>
+                        {% endif %}
+                        <div class="minerals_ist_content item_list_content">
+                            <div class="card-body-left">
+                                <div class="item-number">
+                                    <div>
+                                        <p data-name="count">{{mineral.amount}}</p>
+                                    </div>
+                                </div>
+                                <div class="item-detail">
+                                    <div>
+                                        <p data-mkt-role="name">{{mineral.name}}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-body-right">
+                                <div class="item-input">
+                                    <span class="d-flex">
+                                        <div>
+                                            <input class="form-control" type="number" value="0" max="{{mineral.amount}}" min="0" step="1" />
+                                        </div>
+                                    </span>
+                                </div>
+                                <div class="item-btn">
+                                    <button class="dashboard-btn" onclick="ts._add(this)">
+                                        <span>Add</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<form action="./cancel/" method="post" id="cancel_trade">
+    {% csrf_token %}
+</form>
+
+<script src="{% static 'js/trading.js' %}"></script>
+<script>
+    var ts
+    document.addEventListener("DOMContentLoaded", () => {
+      ts = new TradingNotifier("wss://{{request.session.notif_url}}"+location.pathname, '{{me.nick_name}}', '{{they.nick_name}}')
+    });
+</script>
+
+{% endblock content %}

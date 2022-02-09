@@ -1,0 +1,102 @@
+{% extends "backend/bases/layout.html" %} {% block content %}
+
+<!-- Start app main Content -->
+<div class="main-content">
+  <div class="tokens_outer">
+    <h2 class="section-title my-3">Assets</h2>
+
+    <div class="row px-4">
+      <div class="col-10">
+        {% if error_message %}
+        <div
+          class="alert alert-danger alert-dismissible fade show"
+          role="alert"
+        >
+          <strong>Something happened!</strong> {{error_message}}
+        </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="row px-4">
+      <div class="col-10">
+        {% if error_message %}
+        <div
+          class="alert alert-danger alert-dismissible fade show"
+          role="alert"
+        >
+          <strong>Something happened!</strong> {{error_message}}
+        </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="row mt-3">
+      {% if has_wallet %} {% for token in tokens %}
+      {% if token.balance or token.balance != "0" %}
+      <div class="col-12 col-md-6 col-lg-6 mb-3">
+        <div class="card">
+          <div class="medias">
+            <img class="mr-3"
+            src="{{token.metadata.image|default:"https://placeholder.pics/svg/256"}}"
+            alt="{{token.metadata.description}}" />
+            <div class="media-body"></div>
+          </div>
+          <div class="card-body">
+            {% if token.nonFungible %}
+            <h5 class="mt-3">{{token.name}} [NFT]</h5>
+            {% else %}
+            <h5 class="mt-3">
+              {{token.name}} [FT] <strong>x{{token.balance}}</strong>
+            </h5>
+            {% endif %}
+            <div class="divide"></div>
+            <p>id {{token.id}}</p>
+            <p class="mb-0">
+              {{token.metadata.description|default:"No description"}}
+            </p>
+          </div>
+        </div>
+      </div>
+      {% endif %}
+      {% endfor %} {% else %}
+      <div class="col col-md-8">
+        <div class="alert alert-danger" role="alert">
+          <strong>Sorry!</strong> You need to have an Enjin wallet linked to be
+          able to see your tokens here
+        </div>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+<script>
+  jQuery(document).ready(function () {
+    var maxLength = 30;
+    jQuery('.show-read-more').each(function () {
+      var myStr = jQuery(this).text();
+      if (jQuery.trim(myStr).length > maxLength) {
+        var newStr = myStr.substring(0, maxLength);
+        var removedStr = myStr.substring(maxLength, jQuery.trim(myStr).length);
+        jQuery(this).empty().html(newStr);
+        jQuery(this).append(
+          ' <a href="javascript:void(0);" class="read-more d-block">read more...</a>'
+        );
+        jQuery(this).append(
+          '<span class="more-text">' + removedStr + '</span>'
+        );
+      }
+    });
+    jQuery('.read-more').click(function () {
+      jQuery(this).siblings('.more-text').contents().unwrap();
+      jQuery(this).remove();
+    });
+  });
+</script>
+<style>
+  .show-read-more .more-text {
+    display: none;
+  }
+</style>
+
+{% endblock content %}

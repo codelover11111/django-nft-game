@@ -1,0 +1,67 @@
+{% extends "frontend/bases/main.html" %}
+{% load static %}
+{% load markdown_extras %}
+{% load mathfilters %}
+
+{% block content %}
+
+<section class="account" style="background-image: url('{% static 'public/assets/bg-9.jpg' %}');min-height:870px;">
+    <div class="account-wrap">
+        <h1 style="margin-bottom: 30px;">Subscription</h1>
+
+        <div class="subscribe-wrapper">
+            <h1>1 Month</h1>
+            <div class="price">
+                <span class="currency">$</span>
+                <span class="value">9.99</span>
+                <span class="duration"> / month</span>
+            </div>
+            <p>Season 1</p>
+            <button class="btn" id="choose-plan-btn">Choose Plan</button>
+        </div>
+
+    </div>
+</section>
+
+<script src="https://js.stripe.com/v3/"></script>
+<script type="text/javascript">
+    // Create an instance of the Stripe object with your publishable API key
+    var stripe = Stripe('{{ key }}');
+
+    $("#choose-plan-btn").click(function(){
+        // Create a new Checkout Session using the server-side endpoint you
+        // created in step 3.
+        fetch("/api/checkout-stripe-session/{{ request.session.name }}/", {
+            method: 'POST',
+            headers: {
+                "Content-Type": "application/json",
+                'X-CSRFToken': $('input[name="csrfmiddlewaretoken"]').val()
+            },
+            body: JSON.stringify(
+                { 
+                    email: '{{ request.session.email }}',
+                    enjin_address: enjin_address
+                }
+            )
+        })
+            .then(function (response) {
+                return response.json();
+            })
+            .then(function (session) {
+                return stripe.redirectToCheckout({ sessionId: session.sessionId });
+            })
+            .then(function (result) {
+                // If `redirectToCheckout` fails due to a browser or network
+                // error, you should display the localized error message to your
+                // customer using `error.message`.
+                if (result.error) {
+                    alert(result.error.message);
+                }
+            })
+            .catch(function (error) {
+                console.error('Error:', error);
+            });
+    });
+</script>
+
+{% endblock content %}

@@ -1,0 +1,106 @@
+{% extends "frontend/bases/main.html" %}
+{% load static %}
+{% load markdown_extras %}
+
+
+{% block content %}
+<section class="blog" style="background-image: url('{% static '/public/assets/bg-6.jpg' %}');">
+    <div class="blog-wrap">
+        <h1>Blog</h1>
+
+        <div class="split updates-split recent-blogs">
+            {% if post and post.preview %}
+            <section class="current-blog">
+                <a href="/news/{{ post.slug }}/">
+                    <div class="current-blog-media">
+                        <img class="blog-media" src="{{ post.preview.url }}"/>
+                    </div>
+                </a>
+                <div class="current-blog-content">
+                    <h1 class="title truncate-1">{{ post.title | safe }}</h1>
+                    <span class="blog-content truncate-2">
+                        {{ post.content | markdown | safe }}
+                    </span>
+                    <div class="time">
+                        <span>{{ post.created_at | date }}</span>
+                    </div>
+                    <!-- Read More -->
+                    <div class="blog-read-more">
+                        <a href="/news/{{ post.slug }}/" class="btn btn-color"><span>Read More</span></a>
+                    </div>
+                </div>
+            </section>
+            {% endif %}
+
+            <ul class="blog-list">
+                {% for side_post in side_posts %}
+                {% if side_post.preview %}
+                <li>
+                    <a href="/news/{{ side_post.slug }}/">
+                        <div class="blog-list-media">
+                            <img class="blog-media" src="{{ side_post.preview.url }}" alt="">
+                        </div>
+                        <div class="blog-list-content">
+                            <h1 class="title truncate-1">{{ side_post.title | safe }}</h1>
+                            <span class="blog-content truncate-2">
+                                {{ side_post.content | markdown | safe }}
+                            </span>
+                            <div class="time">
+                                <span>{{ side_post.created_at | date }}</time>
+                            </div>
+                            <!-- Read More -->
+                            <div class="blog-read-more">
+                                <div class="btn btn-color"><span>Read More</span></div>
+                            </div>
+                        </div>
+                    </a>
+                </li>
+                {% endif %}
+                {% endfor %}
+            </ul>
+        </div>
+
+        <hr class="divider" />
+
+        <div class="split updates-split archive-split">
+            <ul class="blog-list old-blog-list">
+                {% for old_post in old_posts %}
+                {% if old_post.preview %}
+                <li>
+                    <a href="/news/{{ old_post.slug }}/">
+                        <div class="blog-list-media">
+                            <img class="blog-media" src="{{ old_post.preview.url }}" alt="">
+                        </div>
+                        <div class="blog-list-content">
+                            <h1 class="title truncate-1">{{ old_post.title | safe }}</h1>
+                            <span class="blog-content truncate-2">
+                                {{ old_post.content | markdown | safe }}
+                            </span>
+                            <div class="time">
+                                <span>{{ old_post.created_at | date }}</span>
+                            </div>
+                            <!-- Read More -->
+                            <div class="blog-read-more">
+                                <div class="btn btn-color"><span>Read More</span></div>
+                            </div>
+                        </div>
+                    </a>
+                </li>
+                {% endif %}
+                {% endfor %}
+            </ul>
+        </div>
+
+        <!-- Newsletter -->
+        <div class="news-letter">
+            <h3>Newsletter</h3>
+            <div id="subscribe_result" class="alert"></div>
+            <form id="news_letter_form">
+                {% csrf_token %}
+                <input id="subscribe_email" type="email" placeholder="Enter your Email" required />
+                <button type="submit" class="btn btn-color"><span>Subscribe</span></button>
+            </form>
+        </div>
+    </div>
+</section>
+{% endblock content %}

@@ -1,0 +1,48 @@
+{% extends 'backend/bases/mgmt.html' %}
+
+{% block content %}
+<div class="row justify-content-center tutorial">
+  <div class="col-md-6">
+    {% if error %}
+    <div class="alert alert-danger">
+      <p>{{ error }}</p>
+    </div>
+    {% endif %}
+
+    <h2>Add a tutorial</h2>
+
+    <form method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+
+      <div class="form-group">
+        <label for="tutorial_title">Title</label>
+        <input id="tutorial_title" type="text" class="form-control" name="title" required="true">
+      </div>
+
+      <div class="form-group">
+        <label for="tutorial_description">Description</label>
+        <textarea id="tutorial_description" name="description" rows="6" class="form-control"></textarea>
+      </div>
+
+      <div class="form-group">
+        <label for="tutorial_length">Length</label>
+        <input id="tutorial_length" type="text" class="form-control" name="length" required="true">
+      </div>
+
+      <div class="form-group btn-tutorial-poster">
+        <label for="tutorial_poster">Poster</label>
+        <input type="file" name="poster" id="tutorial_poster" class="form-control-file" required />
+      </div>
+
+      <div class="form-group btn-tutorial-video">
+        <label for="tutorial_video">Video</label>
+        <input type="file" name="video" id="tutorial_video" class="form-control-file" required />
+      </div>
+
+      <hr>
+
+      <button class="btn btn-success btn-add-tutorial">Create post</button>
+    </form>
+  </div>
+</div>
+{% endblock content %}

@@ -1,0 +1,16 @@
+{% extends "backend/bases/mgmt.html" %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col">
+        {% if error_message %}
+        <div class="alert alert-warning">{{ error_message }}</div>
+        {% endif %}
+    </div>
+
+    <div class="col-sm">
+        <h2>This is a placeholder</h2>
+        <p>there'll be a menu here</p>
+    </div>
+</div>
+{% endblock content %}

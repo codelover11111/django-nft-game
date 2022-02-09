@@ -1,0 +1,67 @@
+{% extends 'backend/bases/mgmt.html' %}
+
+{% block content %}
+<div class="row justify-content-center tutorial">
+  <div class="col-md-6">
+    {% if success %}
+    <div class="alert alert-success">
+      <p>{{ success }}</p>
+    </div>
+    {% endif %}
+
+    {% if error %}
+    <div class="alert alert-danger">
+      <p>{{ error }}</p>
+    </div>
+    {% endif %}
+
+    <h2>Update a tutorial</h2>
+
+    <form method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+
+      <div class="form-group">
+        <label for="tutorial_title">Title</label>
+        <input id="tutorial_title" type="text" class="form-control" name="title" required="true" value="{{ tutorial.title }}" />
+      </div>
+
+      <div class="form-group">
+        <label for="tutorial_description">Description</label>
+        <textarea id="tutorial_description" name="description" rows="6" class="form-control">{{ tutorial.description }}</textarea>
+      </div>
+
+      <div class="form-group">
+        <label for="tutorial_length">Length</label>
+        <input id="tutorial_length" type="text" class="form-control" name="length" required="true" value="{{ tutorial.length }}" />
+      </div>
+
+      <div class="form-group btn-tutorial-poster">
+        <label for="tutorial_poster">Poster</label>
+        <input type="file" name="poster" id="tutorial_poster" class="form-control-file" />
+      </div>
+      {% if tutorial.poster %}
+      <div class="form-group">
+        <img src="{{ tutorial.poster.url }}" alt="" class="tutorial-poster">
+      </div>
+      {% endif %}
+
+      <div class="form-group btn-tutorial-video">
+        <label for="tutorial_video">Video</label>
+        <input type="file" name="video" id="tutorial_video" class="form-control-file" />
+      </div>
+      {% if tutorial.video %}
+      <div class="form-group">
+        <video class="tutorial-video" poster="{{ tutorial.poster.url }}" controls>
+          <source src="{{ tutorial.video.url }}" type="video/mp4">
+          Your browser does not support the video tag.
+        </video>
+      </div>
+      {% endif %}
+
+      <hr>
+
+      <button class="btn btn-success btn-add-tutorial">Update</button>
+    </form>
+  </div>
+</div>
+{% endblock content %}

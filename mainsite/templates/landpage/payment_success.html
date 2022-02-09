@@ -1,0 +1,45 @@
+{% extends "frontend/bases/main.html" %}
+{% load static %}
+{% load markdown_extras %}
+{% load mathfilters %}
+
+{% block content %}
+
+<section class="account" style="background-image: url('{% static 'public/assets/bg-9.jpg' %}');min-height:800px;">
+    <div class="account-wrap" style="max-width: 1430px;">
+        <h1 style="margin-bottom: 30px;">Payment Success</h1>
+        <p class="text-white text-center" style="font-size: 1.5em;margin: 1em;">You paid with {{payment_type}}</p>
+
+        <table class="attr-table cart-table">
+            <thead>
+                <tr style="background: #e41092;">
+                    <td>Product name</td>
+                    <td>Quantity</td>
+                    <td>Price</td>
+                    <td>Amount</td>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in cartItems %}
+                    <tr>
+                        <td style="vertical-align: middle;">
+                            <div style="display: flex;align-items: center;">
+                                <img src="{{item.product.image.url}}" style="width:50px;margin-right:5px;">
+                                <span>{{item.product.title}}</span>
+                            </div>
+                        </td>
+                        <td>{{item.quantity}}</td>
+                        <td>$ {{item.price}}</td>
+                        <td>$ {{item.quantity|mul:item.price}}</td>
+                    </tr>
+                {% endfor  %}
+            </tbody>
+        </table>
+
+        <div>
+            <span class="text-white float-right">Total Amount : $ {{total_amount}}</span>
+        </div>
+    </div>
+</section>
+
+{% endblock content %}

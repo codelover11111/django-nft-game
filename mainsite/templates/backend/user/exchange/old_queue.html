@@ -1,0 +1,53 @@
+{% extends "backend/bases/user.html" %}
+{% load local_date %}
+
+{% block content %}
+  <div class="row px-4">
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col">ID</th>
+          <th scope="col">type</th>
+          <th scope="col">operation</th>
+          <th scope="col">status</th>
+          <th scope="col">performed at</th>
+          <th scope="col">last update</th>
+        </tr>
+      </thead>
+      <tbody id='tx_q'>
+      {% for transaction in transactions %}
+        <tr id="tx-{{transaction.id}}">
+          <td scope="row">{{transaction.id}} <br><small>TX: {{transaction.app_transaction_id}}</small></td>
+          <td scope="row">{{transaction.action}}</td>
+          <td scope="row">Exchanged  <small>{{transaction.q_items}}</small> <strong>{{transaction.item_name}}</strong> for <small>{{transaction.q_tokens}}</small> <strong>{{transaction.token_name}}</strong></td>
+          <td class="tx-status">{{transaction.status}}</td>
+          <td>{{transaction.created_at|to_utc}}</td>
+          <td class="tx-updated">{{transaction.updated_at|to_utc}}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <script>
+    var txq = document.getElementById("tx_q")
+
+    var interval = setInterval(async () => {
+      const data = await fetch('/queue/status/')
+      const response = await data.json()
+
+      if (response.status) {
+        response.data.forEach(o => {
+          let e = txq.querySelector(`#tx-${o.id}`)
+          console.log(e)
+
+          if (e) {
+            // first child
+            e.querySelector('.tx-status').innerText = o.status
+            e.querySelector('.tx-updated').innerText = o.updated_at
+          }
+        })
+      }
+    }, 1000)
+  </script>
+{% endblock content %}

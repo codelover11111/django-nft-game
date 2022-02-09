@@ -1,0 +1,44 @@
+{% extends "frontend/bases/main.html" %}
+{% load static %}
+{% load markdown_extras %}
+
+
+{% block content %}
+<section class="blog single-blog" style="background-image: url('{% static '/public/assets/bg-6.jpg' %}');">
+    <div class="blog-wrap">
+        <h1>Blog</h1>
+
+        <div class="recent-blogs">
+            {% if post and post.cover %}
+            <section class="current-blog">
+                <a href="#">
+                    <div class="current-blog-media">
+                        <img class="blog-media" src="{{ post.cover.url }}"/>
+                    </div>
+                </a>
+                <div class="current-blog-content">
+                    <h1>{{ post.title | safe }}</h1>
+                    <span class="blog-content">
+                        {{ post.content | markdown | safe }}
+                    </span>
+                    <div class="time">
+                        <span>{{ post.created_at | date }}</span>
+                    </div>
+                </div>
+            </section>
+            {% endif %}
+        </div>
+
+        <!-- Newsletter -->
+        <div class="news-letter">
+            <h3>Newsletter</h3>
+            <div id="subscribe_result" class="alert"></div>
+            <form id="news_letter_form">
+                {% csrf_token %}
+                <input id="subscribe_email" type="email" placeholder="Enter your Email" required />
+                <button type="submit" class="btn btn-color"><span>Subscribe</span></button>
+            </form>
+        </div>
+    </div>
+</section>
+{% endblock content %}

@@ -1,0 +1,11 @@
+{% extends "frontend/bases/main.html" %}
+{% load static %}
+
+{% block content %}
+<section class="account" style="background-image: url('{% static '/public/assets/bg-9.jpg' %}');">
+    <div class="account-wrap">
+        <div class="alert alert-info">{{ message }}</div>
+        <!-- <a href="/">Go back home</a> -->
+    </div>
+</section>
+{% endblock content %}

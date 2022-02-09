@@ -1,0 +1,37 @@
+<form action="/mgmt/tx/update/{{txid}}/" id="updateTx" method="post" onsubmit="confirmSubmit(event)">
+    {% csrf_token %}
+
+    {% for suspect in suspects %}
+    <div class="input-group-lg">
+        <!--div class="radio"-->
+            <input class="hidden form-control" type="radio" id="sus{{suspect.id}}" value="{{suspect.id}}" name="suspect_id">
+            <label for="sus{{suspect.id}}" class="control-label col-sm-12 normal">
+                <ul class="list-group col-sm-6">
+                    <li class="list-group-item"><b>Request ID</b> {{ suspect.id }}</li>
+                    <li class="list-group-item"><b>Created at</b> {{ suspect.createdAt }}</li>
+                    <li class="list-group-item"><b>Type</b> {{ suspect.type }}</li>
+                </ul>
+                <ul class="list-group col-sm-6">
+                    <li class="list-group-item"><b>Token Name</b> {{ suspect.title }}</li>
+                    <li class="list-group-item"><b>Token ID</b> {{ suspect.tokenId }}</li>
+                    <li class="list-group-item"><b>Value</b> {{ suspect.value }}</li>
+                </ul>
+            </label>
+        <!-- /div -->
+    </div>
+    {% endfor %}
+
+    <div class="input-group-lg">
+            <input class="hidden form-control" type="radio" id="sus_" value="-1" name="suspect_id">
+            <label for="sus_" class="control-form col-sm-12 normal">
+                <ul class="list-group">
+                    <li class="list-group-item"><b>None of the above</b></li>
+                    <li class="list-group-item">This will render the request as FAILED</li>
+                </ul>
+            </label>
+    </div>
+
+    <button class="btn btn-danger btn-block" form="updateTx">Confirm</button>
+</form>
+<br>
+

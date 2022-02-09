@@ -1,0 +1,38 @@
+{% extends 'backend/bases/mgmt.html' %}
+
+{% block content %}
+<div class="row justify-content-center" style="padding: 10px;">
+  <div>
+    <h2>Blog posts</h2>
+    <a class="btn btn-success" href="/mgmt/blog/post/new/" style="margin-bottom: 12px;">Add new post</a>
+  </div>
+
+  <table class="table table-bordered table-hover">
+    <thead>
+      <tr>
+        <th scope="col">No</th>
+        <th scope="col">Title</th>
+        <th scope="col">Created at</th>
+        <th scope="col">Author</th>
+        <th scope="col"></th>
+      </tr>
+    </thead>
+
+    <tbody>
+    {% for post in posts %}
+      <tr>
+        <th>{{forloop.counter}}</th>
+        <th scope="row">{{ post.title }}</th>
+        <td>{{ post.created_at }}</td>
+        <td>{{ post.author.get_name }}</td>
+        <td class="text-center" style="width: 15%;">
+          <a href="/mgmt/blog/post/{{ post.id }}/" class="btn btn-primary">Edit</a>
+          <a href="/mgmt/blog/post/delete/{{ post.id }}/" class="btn btn-danger">Delete</a>
+          <a href="/mgmt/blog/preview/{{ post.id }}/" class="btn btn-warning">Preview</a>
+        </td>
+      </tr>
+    {% endfor  %}
+    </tbody>
+  </table>
+</div>
+{% endblock content %}

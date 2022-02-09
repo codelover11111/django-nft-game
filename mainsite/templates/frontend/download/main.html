@@ -1,0 +1,19 @@
+{% extends "frontend/bases/main.html" %}
+{% load static %}
+{% load markdown_extras %}
+
+{% block content %}
+<div class="main-content">
+  <div class="news_section download-section">
+      <div class="container">
+          <div class="sec_title">
+            <h2>Space Misfits is currently still in early access and in Beta</h2>
+            <h2>Development updates happen very regularly</h2>
+            <a href="{% static download_link %}" class="btn btn-color text-uppercase download">
+              <span>Download</span>
+          </a>
+          </div>
+      </div>
+  </div>
+</div>
+{% endblock content %}

@@ -1,0 +1,38 @@
+{% extends "backend/bases/mgmt.html" %}
+
+{% block content %}
+<div class="row">
+    <h2>Events campaigns</h2>
+
+    {% if error_message %}
+    <div class="alert alert-warning">{{ error_message }}</div>
+    {% endif %}
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">Title</th>
+                <th scope="col">Observes</th>
+                <th scope="col">Status</th>
+                <th scope="col"></th>
+                <th scope="col"></th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for campaign in campaigns %}
+            <tr>
+                <th scope="row">{{ campaign.name }}</th>
+                <td>{{ campaign.description }}</td>
+                {% if campaign.status == 'ENDED' %}
+                <td class="text-muted">Finished</td>
+                {% else %}
+                <td class="text-success">Active</td>
+                {% endif %}
+                <td><a class="btn btn-primary" href="/mgmt/campaign/?id={{ campaign.id }}" title="{{ campaign.description }}">View</a></td>
+                <td><a class="btn btn-success" href="/leaderboard/{{ campaign.id }}" target="_blank">Public link</a></td>
+            </tr>
+        {% endfor%}
+        </tbody>
+    </table>
+</div>
+{% endblock content %}
